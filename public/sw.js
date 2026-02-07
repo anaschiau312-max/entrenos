@@ -1,5 +1,5 @@
 // RunTracker Service Worker v1
-const CACHE_VERSION = 'rt-v1';
+const CACHE_VERSION = 'rt-v2';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
 

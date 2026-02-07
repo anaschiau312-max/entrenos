@@ -157,6 +157,7 @@ const DashboardView = {
 
     async renderSessionCard(session, todayData, todayLog, allExercises) {
         const isRunning = session.type === 'running';
+        const isCycling = session.type === 'cycling';
         const isStrength = session.type === 'strength';
         const icon = isRunning ? '🏃' : isCycling ? '🚴' : isStrength ? '💪' : '🧘';
         const badgeClass = isRunning ? 'badge-running' : isCycling ? 'badge-cycling' : isStrength ? 'badge-strength' : 'badge-rest';

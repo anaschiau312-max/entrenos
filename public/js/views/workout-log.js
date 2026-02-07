@@ -207,7 +207,7 @@ const WorkoutLogView = {
                 </div>
             </div>
 
-            <input type="file" id="wl-ocr-file" accept="image/*" capture="environment" style="display:none;">
+            <input type="file" id="wl-ocr-file" accept="image/*" style="display:none;">
 
             <div id="wl-ocr-upload-area" class="wl-ocr-upload-area">
                 <div class="wl-ocr-upload-content">
@@ -594,7 +594,7 @@ const WorkoutLogView = {
         const durSInput = document.getElementById('wl-dur-s');
         const paceInput = document.getElementById('wl-pace');
 
-        if (distInput && durHInput) {
+        if (distInput && durHInput && paceInput) {
             const calcPace = () => {
                 const dist = parseFloat(distInput.value);
                 const h = parseInt(durHInput.value) || 0;
