@@ -2496,6 +2496,130 @@ textarea.form-control {
     margin-bottom: 8px;
 }
 
+/* ===== Settings View ===== */
+
+.set-header {
+    margin-bottom: 16px;
+}
+
+.set-section {
+    margin-bottom: 12px;
+}
+
+.set-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.set-section-icon {
+    font-size: 18px;
+}
+
+.set-readonly {
+    padding: 10px 12px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius-btn);
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* Race countdown */
+.set-countdown {
+    text-align: center;
+    padding: 12px;
+    margin-bottom: 12px;
+    background-color: rgba(233, 69, 96, 0.08);
+    border-radius: var(--border-radius-btn);
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.set-countdown strong {
+    color: var(--accent);
+}
+
+/* Export buttons spacing */
+.set-export-btn {
+    margin-bottom: 8px;
+}
+
+/* App status rows */
+.set-app-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.set-app-row:last-child {
+    border-bottom: none;
+}
+
+.set-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.set-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.set-status-dot.st-online {
+    background-color: var(--success);
+    box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+}
+
+.set-status-dot.st-offline {
+    background-color: var(--warning);
+    box-shadow: 0 0 6px rgba(255, 152, 0, 0.5);
+}
+
+.set-version {
+    justify-content: center;
+    padding-top: 12px;
+    border-bottom: none;
+}
+
+/* Save confirmation */
+.set-save-ok {
+    text-align: center;
+    padding: 8px;
+    font-size: 13px;
+    color: var(--success);
+    animation: viewFadeIn 0.3s ease;
+}
+
+/* Logout button */
+.set-logout-btn {
+    margin-top: 8px;
+    margin-bottom: 24px;
+    padding: 14px;
+    font-size: 15px;
+    background-color: rgba(244, 67, 54, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(244, 67, 54, 0.2);
+    border-radius: var(--border-radius-btn);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition);
+}
+
+.set-logout-btn:active {
+    background-color: rgba(244, 67, 54, 0.25);
+}
+
 /* ===== Responsive — Desktop ===== */
 @media (min-width: 768px) {
     .app-container {
