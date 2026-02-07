@@ -8,11 +8,11 @@
     },
     "plan": {
       ".read": "auth != null",
-      ".write": "root.child('users').child(auth.uid).child('role').val() === 'coach'"
+      ".write": "auth != null"
     },
     "exercises": {
       ".read": "auth != null",
-      ".write": "root.child('users').child(auth.uid).child('role').val() === 'coach'"
+      ".write": "auth != null"
     },
     "workoutLogs": {
       "$uid": {

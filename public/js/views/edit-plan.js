@@ -1,4 +1,4 @@
-// Edit Plan View — Coach only
+// Edit Plan View — Available to all authenticated users
 // Allows editing weekly plan sessions and exercise library
 
 const EditPlanView = {
@@ -14,11 +14,6 @@ const EditPlanView = {
     },
 
     async render() {
-        // Role check
-        if (window.currentRole !== 'coach') {
-            return this.renderAccessDenied();
-        }
-
         const s = this.state;
         const [plan, phases, allExercises] = await Promise.all([
             DB.getPlan(),
