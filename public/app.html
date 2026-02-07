@@ -108,6 +108,9 @@
     <!-- Core modules -->
     <script src="/js/firebase-config.js"></script>
     <script src="/js/auth.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/offline.js"></script>
+    <script src="/js/db.js"></script>
     <script src="/js/router.js"></script>
 
     <!-- Initialize app -->
@@ -119,6 +122,9 @@
             // Store role globally for views to use
             window.currentUser = user;
             window.currentRole = role;
+
+            // Initialize offline manager
+            Offline.init();
 
             // Initialize router
             Router.init();
