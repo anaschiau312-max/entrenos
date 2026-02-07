@@ -1759,6 +1759,331 @@ textarea.form-control {
     vertical-align: middle;
 }
 
+/* ===== Exercises View ===== */
+
+.ex-header {
+    margin-bottom: 12px;
+}
+
+/* Category tabs — horizontal scroll */
+.ex-tabs-scroll {
+    margin: 0 -16px 16px;
+    padding: 0 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.ex-tabs-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.ex-tabs {
+    display: inline-flex;
+    gap: 6px;
+    padding: 2px 0;
+    white-space: nowrap;
+}
+
+.ex-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color var(--transition), color var(--transition), background-color var(--transition);
+}
+
+.ex-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background-color: rgba(233, 69, 96, 0.08);
+}
+
+/* Content area transition */
+.ex-content {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.ex-category-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+/* === Exercise cards (strength/plyometrics) === */
+
+.ex-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ex-card {
+    overflow: hidden;
+    padding: 0;
+}
+
+.ex-card-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 120px;
+    background: linear-gradient(135deg, rgba(15, 52, 96, 0.6), rgba(22, 33, 62, 0.8));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ex-card-image-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 0 12px;
+}
+
+.ex-card-body {
+    padding: 14px 16px;
+}
+
+.ex-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.ex-card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.ex-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.ex-badge-sets {
+    background-color: rgba(76, 175, 80, 0.12);
+    color: var(--success);
+}
+
+.ex-badge-rest {
+    background-color: rgba(255, 152, 0, 0.12);
+    color: var(--warning);
+}
+
+.ex-badge-duration {
+    background-color: rgba(233, 69, 96, 0.12);
+    color: var(--accent);
+}
+
+.ex-card-tips {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.ex-card-expand {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ex-video-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* === Warmup timeline === */
+
+.ex-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 16px;
+}
+
+.ex-timeline-step {
+    display: flex;
+    gap: 14px;
+}
+
+.ex-timeline-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 42px;
+}
+
+.ex-timeline-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: rgba(233, 69, 96, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.ex-timeline-line {
+    width: 2px;
+    flex: 1;
+    min-height: 20px;
+    background: linear-gradient(to bottom, var(--accent), rgba(233, 69, 96, 0.1));
+}
+
+.ex-timeline-content {
+    flex: 1;
+    margin-bottom: 12px;
+}
+
+.ex-timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.ex-timeline-part {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.ex-timeline-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.ex-warmup-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* === Cooldown stretching list === */
+
+.ex-cooldown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ex-cooldown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+}
+
+.ex-cooldown-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    width: 36px;
+    text-align: center;
+}
+
+.ex-cooldown-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ex-cooldown-muscle {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.ex-cooldown-tips {
+    font-size: 13px;
+}
+
+.ex-cooldown-time {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* === Technique flashcards === */
+
+.ex-flashcards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ex-flashcard {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-card);
+    border-left: 4px solid var(--fc-color, var(--accent));
+    transition: transform var(--transition);
+}
+
+.ex-flashcard:active {
+    transform: scale(0.98);
+}
+
+.ex-flashcard-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.ex-flashcard-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.ex-flashcard-topic {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--fc-color, var(--accent));
+    margin-bottom: 4px;
+}
+
+.ex-flashcard-advice {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
 /* ===== Responsive — Desktop ===== */
 @media (min-width: 768px) {
     .app-container {
