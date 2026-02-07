@@ -1160,6 +1160,430 @@ textarea.form-control {
     margin-bottom: 12px;
 }
 
+/* ===== Workout Log View ===== */
+
+.wl-header {
+    margin-bottom: 16px;
+}
+
+.wl-date-display {
+    padding-left: 2px;
+}
+
+/* Session tabs */
+.wl-session-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.wl-session-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--border-radius-btn);
+    background: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color var(--transition), color var(--transition), background-color var(--transition);
+}
+
+.wl-session-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background-color: rgba(233, 69, 96, 0.08);
+}
+
+/* Reference card */
+.wl-reference {
+    margin-bottom: 16px;
+    border-left: 3px solid var(--secondary);
+}
+
+.wl-ref-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.wl-ref-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.wl-ref-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.wl-ref-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.wl-ref-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wl-ref-details {
+    padding: 12px 0 4px;
+}
+
+/* Form card */
+.wl-form-card {
+    margin-bottom: 16px;
+}
+
+/* Duration inputs */
+.wl-duration-inputs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.wl-duration-field {
+    flex: 1;
+    position: relative;
+}
+
+.wl-duration-field .form-control {
+    text-align: center;
+    padding-right: 28px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.wl-duration-label {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.wl-duration-sep {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    padding: 0 2px;
+}
+
+/* Metrics grid (2 columns) */
+.wl-metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.wl-metrics-grid .form-group {
+    margin-bottom: 12px;
+}
+
+/* Advanced toggle */
+.wl-advanced-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.wl-advanced-toggle .expand-icon {
+    transition: transform var(--transition);
+}
+
+.wl-advanced-toggle.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+.wl-advanced-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.wl-advanced-body.open {
+    max-height: 400px;
+}
+
+/* Strength exercise items */
+.wl-exercise-group-title {
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+    margin-top: 12px;
+    margin-bottom: 8px;
+}
+
+.wl-exercise-item {
+    padding: 8px 0;
+}
+
+.wl-exercise-item + .wl-exercise-item {
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.wl-exercise-check-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+/* Custom checkbox */
+.wl-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+}
+
+.wl-checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.wl-checkbox-custom {
+    width: 22px;
+    height: 22px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color var(--transition), background-color var(--transition);
+}
+
+.wl-checkbox-label input:checked + .wl-checkbox-custom {
+    border-color: var(--accent);
+    background-color: var(--accent);
+}
+
+.wl-checkbox-label input:checked + .wl-checkbox-custom::after {
+    content: '✓';
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.wl-exercise-name {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Exercise detail fields (collapsible) */
+.wl-exercise-fields {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 0 0 32px;
+}
+
+.wl-exercise-fields.open {
+    max-height: 200px;
+    padding: 10px 0 4px 32px;
+}
+
+.wl-exercise-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.wl-exercise-inputs .form-group {
+    margin-bottom: 0;
+}
+
+.wl-exercise-inputs .form-control {
+    padding: 10px 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.wl-exercise-inputs label {
+    font-size: 11px;
+}
+
+.wl-exercise-fields .wl-ex-notes {
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+.wl-exercise-fields .form-group {
+    margin-bottom: 0;
+}
+
+/* Feeling selector */
+.wl-feeling-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+}
+
+.wl-feeling-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 8px;
+    min-width: 60px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--border-radius-btn);
+    background: none;
+    cursor: pointer;
+    transition: border-color var(--transition), background-color var(--transition);
+}
+
+.wl-feeling-btn.selected {
+    border-color: var(--accent);
+    background-color: rgba(233, 69, 96, 0.1);
+}
+
+.wl-feeling-emoji {
+    font-size: 24px;
+}
+
+.wl-feeling-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.wl-feeling-btn.selected .wl-feeling-label {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* RPE slider */
+.wl-rpe-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.wl-rpe-label-end {
+    font-size: 11px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    min-width: 42px;
+}
+
+.wl-rpe-label-end:last-child {
+    text-align: right;
+}
+
+.wl-rpe-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: linear-gradient(to right, var(--success), var(--warning), var(--danger));
+    border-radius: 3px;
+    outline: none;
+}
+
+.wl-rpe-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 3px solid var(--accent);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.wl-rpe-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 3px solid var(--accent);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.wl-rpe-marks {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 48px 0;
+}
+
+.wl-rpe-mark {
+    font-size: 10px;
+    color: var(--text-secondary);
+    width: 16px;
+    text-align: center;
+}
+
+/* Save button area */
+.wl-save-btn {
+    margin-top: 8px;
+    margin-bottom: 12px;
+    padding: 16px;
+    font-size: 16px;
+}
+
+/* Error message */
+.wl-error {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: var(--danger);
+    padding: 10px 14px;
+    border-radius: var(--border-radius-btn);
+    font-size: 14px;
+    margin-bottom: 12px;
+    animation: viewFadeIn 0.2s ease;
+}
+
+/* Confirmation */
+.wl-confirm {
+    text-align: center;
+    padding: 24px 16px;
+    animation: viewFadeIn 0.3s ease;
+}
+
+.wl-confirm-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.wl-confirm-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--success);
+    margin-bottom: 8px;
+}
+
+/* No session card */
+.wl-no-session {
+    margin-bottom: 16px;
+}
+
 /* ===== Responsive — Desktop ===== */
 @media (min-width: 768px) {
     .app-container {
