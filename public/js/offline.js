@@ -159,29 +159,63 @@ const Offline = {
 
     init() {
         // Show/hide offline indicator
-        const updateIndicator = () => {
+        const showBanner = () => {
             let indicator = document.getElementById('offline-indicator');
-            if (!navigator.onLine) {
-                if (!indicator) {
-                    indicator = document.createElement('div');
-                    indicator.id = 'offline-indicator';
-                    indicator.style.cssText = 'position:fixed;top:56px;left:0;right:0;background:#FF9800;color:#000;text-align:center;padding:4px;font-size:12px;font-weight:600;z-index:200;';
-                    indicator.textContent = 'Sin conexión — los cambios se guardarán localmente';
-                    document.body.appendChild(indicator);
-                }
-            } else {
-                if (indicator) indicator.remove();
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'offline-indicator';
+                indicator.style.cssText = `
+                    position: fixed; top: 56px; left: 0; right: 0;
+                    background: linear-gradient(135deg, #FF9800, #F57C00);
+                    color: #000; text-align: center;
+                    padding: 6px 12px; font-size: 12px; font-weight: 600;
+                    z-index: 200; display: flex; align-items: center;
+                    justify-content: center; gap: 6px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                `;
+                indicator.innerHTML = '<span style="font-size:14px">&#9889;</span> Sin conexión — usando datos locales';
+                document.body.appendChild(indicator);
             }
         };
 
+        const hideBanner = () => {
+            const indicator = document.getElementById('offline-indicator');
+            if (indicator) indicator.remove();
+        };
+
+        const showSyncBanner = () => {
+            let syncBanner = document.getElementById('sync-indicator');
+            if (!syncBanner) {
+                syncBanner = document.createElement('div');
+                syncBanner.id = 'sync-indicator';
+                syncBanner.style.cssText = `
+                    position: fixed; top: 56px; left: 0; right: 0;
+                    background: linear-gradient(135deg, #4CAF50, #388E3C);
+                    color: #fff; text-align: center;
+                    padding: 6px 12px; font-size: 12px; font-weight: 600;
+                    z-index: 200; transition: opacity 0.5s;
+                `;
+                syncBanner.textContent = 'Conexión restaurada — sincronizando...';
+                document.body.appendChild(syncBanner);
+            }
+            setTimeout(() => {
+                syncBanner.style.opacity = '0';
+                setTimeout(() => syncBanner.remove(), 500);
+            }, 3000);
+        };
+
         window.addEventListener('online', () => {
-            updateIndicator();
+            hideBanner();
+            const queue = this.getQueue();
+            if (queue.length > 0) {
+                showSyncBanner();
+            }
             this.syncQueue();
         });
 
-        window.addEventListener('offline', updateIndicator);
+        window.addEventListener('offline', showBanner);
 
-        updateIndicator();
+        if (!navigator.onLine) showBanner();
 
         // Sync pending queue on load if online
         if (navigator.onLine) {
