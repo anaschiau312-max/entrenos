@@ -522,6 +522,270 @@ textarea.form-control {
 .justify-between { justify-content: space-between; }
 .flex-1 { flex: 1; }
 
+/* ===== Dashboard View ===== */
+
+.dash-date {
+    margin-bottom: 12px;
+}
+
+.dash-date-main {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.dash-phase {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.dash-week-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Progress bar */
+.dash-progress {
+    margin-bottom: 12px;
+}
+
+.dash-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--accent);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    min-width: 0;
+}
+
+/* Schedule card */
+.dash-schedule {
+    margin-bottom: 12px;
+}
+
+.dash-schedule-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+}
+
+.dash-schedule-row + .dash-schedule-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.dash-schedule-icon {
+    font-size: 20px;
+    width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Session card */
+.dash-session {
+    margin-bottom: 12px;
+}
+
+.dash-session-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.dash-session-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.dash-session-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dash-session-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.dash-session-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Session details (expanded) */
+.dash-session-details {
+    padding: 12px 0;
+}
+
+.dash-detail-row {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 0;
+}
+
+.dash-detail-row + .dash-detail-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.dash-detail-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+}
+
+.dash-detail-value {
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+/* Exercise list in session */
+.dash-exercise-group-name {
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+    margin-top: 8px;
+    margin-bottom: 6px;
+}
+
+.dash-exercise-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 14px;
+}
+
+.dash-exercise-item + .dash-exercise-item {
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.dash-exercise-name {
+    color: var(--text-primary);
+}
+
+.dash-exercise-sets {
+    color: var(--text-secondary);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* Log summary (completed) */
+.dash-log-summary {
+    padding-top: 8px;
+}
+
+.dash-log-badge {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--success);
+    margin-bottom: 8px;
+}
+
+.dash-log-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 8px;
+}
+
+.dash-log-stat {
+    text-align: center;
+    padding: 6px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+}
+
+.dash-log-stat-value {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.dash-log-stat-label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+/* Register button in session card */
+.dash-register-btn {
+    margin-top: 12px;
+}
+
+/* Rest day card */
+.dash-rest {
+    text-align: center;
+    padding: 32px 16px;
+    margin-bottom: 12px;
+}
+
+.dash-rest-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.dash-rest-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.dash-rest-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Tip of the day */
+.dash-tip {
+    margin-bottom: 12px;
+}
+
+.dash-tip-content {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding-top: 4px;
+}
+
+.dash-tip-topic {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+.dash-tip-advice {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
 /* ===== Responsive — Desktop ===== */
 @media (min-width: 768px) {
     .app-container {
