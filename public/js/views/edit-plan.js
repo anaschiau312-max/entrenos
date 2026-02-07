@@ -161,6 +161,7 @@ const EditPlanView = {
 
     renderSessionEditor(weekId, dateStr, session, index) {
         const isRunning = session.type === 'running';
+        const isCycling = session.type === 'cycling';
         const isStrength = session.type === 'strength';
 
         // Exercise group selector for strength
@@ -180,7 +181,7 @@ const EditPlanView = {
 
         // Running details
         let detailsHtml = '';
-        if (isRunning) {
+        if (isRunning || isCycling) {
             const d = session.details || {};
             detailsHtml = `
             <div class="ep-session-details">
@@ -211,6 +212,7 @@ const EditPlanView = {
                     <label class="ep-field-label">Tipo</label>
                     <select class="form-control ep-input-sm ep-ses-type" data-date="${dateStr}" data-idx="${index}">
                         <option value="running" ${session.type === 'running' ? 'selected' : ''}>🏃 Carrera</option>
+                        <option value="cycling" ${session.type === 'cycling' ? 'selected' : ''}>🚴 Ciclismo</option>
                         <option value="strength" ${session.type === 'strength' ? 'selected' : ''}>💪 Fuerza</option>
                         <option value="rest" ${session.type === 'rest' ? 'selected' : ''}>🧘 Descanso activo</option>
                         <option value="mobility" ${session.type === 'mobility' ? 'selected' : ''}>🔄 Movilidad</option>

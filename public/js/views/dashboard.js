@@ -158,9 +158,9 @@ const DashboardView = {
     async renderSessionCard(session, todayData, todayLog, allExercises) {
         const isRunning = session.type === 'running';
         const isStrength = session.type === 'strength';
-        const icon = isRunning ? '🏃' : isStrength ? '💪' : '🧘';
-        const badgeClass = isRunning ? 'badge-running' : isStrength ? 'badge-strength' : 'badge-rest';
-        const typeLabel = isRunning ? 'Carrera' : isStrength ? 'Fuerza' : 'Otro';
+        const icon = isRunning ? '🏃' : isCycling ? '🚴' : isStrength ? '💪' : '🧘';
+        const badgeClass = isRunning ? 'badge-running' : isCycling ? 'badge-cycling' : isStrength ? 'badge-strength' : 'badge-rest';
+        const typeLabel = isRunning ? 'Carrera' : isCycling ? 'Ciclismo' : isStrength ? 'Fuerza' : 'Otro';
         const isCompleted = session.completed || (todayLog && todayLog.actual && todayLog.actual.completed);
 
         // Build expandable details

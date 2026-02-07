@@ -83,7 +83,7 @@ const WorkoutLogView = {
         if (s.sessions.length > 1) {
             html += `<div class="wl-session-tabs">`;
             s.sessions.forEach((ses, i) => {
-                const icon = ses.type === 'running' ? '🏃' : '💪';
+                const icon = ses.type === 'running' ? '🏃' : ses.type === 'cycling' ? '🚴' : '💪';
                 const active = i === s.activeSessionIndex ? 'active' : '';
                 html += `<button class="wl-session-tab ${active}" data-session-idx="${i}">${icon} ${ses.title}</button>`;
             });
@@ -96,14 +96,16 @@ const WorkoutLogView = {
         // Reference section
         html += this.renderReference(session);
 
-        // OCR section (only for running sessions)
-        if (session.type === 'running') {
+        // OCR section (for running and cycling)
+        if (session.type === 'running' || session.type === 'cycling') {
             html += this.renderOcrSection();
         }
 
         // Form fields per type
         if (session.type === 'running') {
             html += this.renderRunningForm(session);
+        } else if (session.type === 'cycling') {
+            html += this.renderCyclingForm(session);
         } else if (session.type === 'strength') {
             html += this.renderStrengthForm(session);
         }
@@ -127,12 +129,12 @@ const WorkoutLogView = {
     },
 
     renderReference(session) {
-        const icon = session.type === 'running' ? '🏃' : '💪';
-        const badgeClass = session.type === 'running' ? 'badge-running' : 'badge-strength';
-        const typeLabel = session.type === 'running' ? 'Carrera' : 'Fuerza';
+        const icon = session.type === 'running' ? '🏃' : session.type === 'cycling' ? '🚴' : '💪';
+        const badgeClass = session.type === 'running' ? 'badge-running' : session.type === 'cycling' ? 'badge-cycling' : 'badge-strength';
+        const typeLabel = session.type === 'running' ? 'Carrera' : session.type === 'cycling' ? 'Ciclismo' : 'Fuerza';
 
         let detailsHtml = '';
-        if (session.type === 'running' && session.details) {
+        if ((session.type === 'running' || session.type === 'cycling') && session.details) {
             detailsHtml = `
                 <div class="wl-ref-details">
                     ${session.description ? `<p class="text-sm text-muted mb-8">${session.description}</p>` : ''}
@@ -350,6 +352,91 @@ const WorkoutLogView = {
         </div>`;
     },
 
+
+
+    renderCyclingForm(session) {
+        const log = this.state.existingLog;
+        const a = log ? (log.actual || {}) : {};
+
+        // Parse existing duration
+        let durH = '', durM = '', durS = '';
+        if (a.duration) {
+            const parts = a.duration.split(':');
+            if (parts.length === 3) { durH = parts[0]; durM = parts[1]; durS = parts[2]; }
+            else if (parts.length === 2) { durH = '0'; durM = parts[0]; durS = parts[1]; }
+        }
+
+        return `
+        <div class="card wl-form-card" id="wl-cycling-form">
+            <div class="card-header">
+                <span class="card-title">🚴 Datos de ciclismo</span>
+            </div>
+
+            <div class="form-group">
+                <label>Duración</label>
+                <div class="wl-duration-inputs">
+                    <div class="wl-duration-field">
+                        <input type="number" id="wl-dur-h" class="form-control" inputmode="numeric" min="0" max="23" placeholder="HH" value="${durH}">
+                        <span class="wl-duration-label">h</span>
+                    </div>
+                    <span class="wl-duration-sep">:</span>
+                    <div class="wl-duration-field">
+                        <input type="number" id="wl-dur-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="${durM}">
+                        <span class="wl-duration-label">min</span>
+                    </div>
+                    <span class="wl-duration-sep">:</span>
+                    <div class="wl-duration-field">
+                        <input type="number" id="wl-dur-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="${durS}">
+                        <span class="wl-duration-label">seg</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wl-metrics-grid">
+                <div class="form-group">
+                    <label for="wl-calories">Calorías activas</label>
+                    <input type="number" id="wl-calories" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 153" value="${a.calories || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="wl-hr">FC media (bpm)</label>
+                    <input type="number" id="wl-hr" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Ej: 119" value="${a.heart_rate_avg || ''}">
+                </div>
+            </div>
+
+            <div class="wl-metrics-grid">
+                <div class="form-group">
+                    <label for="wl-hr-max">FC máxima (bpm)</label>
+                    <input type="number" id="wl-hr-max" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Ej: 142" value="${a.heart_rate_max || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="wl-distance">Distancia (km)</label>
+                    <input type="number" id="wl-distance" class="form-control" inputmode="decimal" step="0.01" min="0" placeholder="Opcional" value="${a.distance_km || ''}">
+                </div>
+            </div>
+
+            <div class="wl-metrics-grid">
+                <div class="form-group">
+                    <label for="wl-speed-avg">Velocidad media (km/h)</label>
+                    <input type="number" id="wl-speed-avg" class="form-control" inputmode="decimal" step="0.1" min="0" placeholder="Opcional" value="${a.speed_avg || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="wl-speed-max">Velocidad máx (km/h)</label>
+                    <input type="number" id="wl-speed-max" class="form-control" inputmode="decimal" step="0.1" min="0" placeholder="Opcional" value="${a.speed_max || ''}">
+                </div>
+            </div>
+
+            <div class="wl-metrics-grid">
+                <div class="form-group">
+                    <label for="wl-cadence">Cadencia (rpm)</label>
+                    <input type="number" id="wl-cadence" class="form-control" inputmode="numeric" min="0" max="200" placeholder="Opcional" value="${a.cadence || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="wl-power">Potencia (W)</label>
+                    <input type="number" id="wl-power" class="form-control" inputmode="numeric" min="0" placeholder="Opcional" value="${a.power || ''}">
+                </div>
+            </div>
+        </div>`;
+    },
     renderStrengthForm(session) {
         const log = this.state.existingLog;
         const logExercises = log && log.actual ? (log.actual.exercises || {}) : {};

@@ -2706,3 +2706,19 @@ textarea.form-control {
         padding-left: 200px;
     }
 }
+
+/* Edit day button in weekly view */
+.week-edit-day-btn {
+    margin-top: 12px;
+    width: 100%;
+}
+
+/* Cycling badge */
+.badge-cycling {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+}
+
+.cal-dot-cycling {
+    background-color: #22c55e;
+}

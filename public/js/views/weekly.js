@@ -179,6 +179,9 @@ const WeeklyView = {
                 <div class="expandable-body">
                     ${scheduleHtml}
                     ${detailsHtml}
+                    <button class="btn btn-secondary btn-sm week-edit-day-btn" data-week="${this.currentWeekNum}" data-date="${dateStr}">
+                        ✏️ Editar día
+                    </button>
                 </div>
             </div>`;
         }
@@ -247,6 +250,18 @@ const WeeklyView = {
                 header.classList.toggle('expanded');
                 const body = header.nextElementSibling;
                 body.classList.toggle('open');
+            });
+        });
+
+        // Edit day buttons
+        document.querySelectorAll('.week-edit-day-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const weekNum = parseInt(e.currentTarget.dataset.week);
+                if (window.EditPlanView) {
+                    window.EditPlanView.state.currentWeekNum = weekNum;
+                }
+                Router.navigate('edit-plan');
             });
         });
 

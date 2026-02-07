@@ -113,6 +113,7 @@ const CalendarView = {
                     } else {
                         const allCompleted = sessions.every(s => s.completed);
                         const isRunning = sessions.some(s => s.type === 'running');
+                        const isCycling = sessions.some(s => s.type === 'cycling');
                         const isStrength = sessions.some(s => s.type === 'strength');
 
                         if (allCompleted || (log && log.actual && log.actual.completed)) {
@@ -241,6 +242,7 @@ const CalendarView = {
 
         for (const session of sessions) {
             const isRunning = session.type === 'running';
+            const isCycling = session.type === 'cycling';
             const icon = isRunning ? '🏃' : '💪';
             const isCompleted = session.completed;
 
