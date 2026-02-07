@@ -2236,6 +2236,266 @@ textarea.form-control {
     color: var(--text-primary);
 }
 
+/* ===== Edit Plan View ===== */
+
+.ep-denied {
+    padding-top: 40px;
+}
+
+.ep-header {
+    margin-bottom: 12px;
+}
+
+/* Tabs */
+.ep-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.ep-tab {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--border-radius-btn);
+    background: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color var(--transition), color var(--transition), background-color var(--transition);
+}
+
+.ep-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background-color: rgba(233, 69, 96, 0.08);
+}
+
+/* Day card */
+.ep-day-card {
+    margin-bottom: 12px;
+}
+
+.ep-day-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ep-day-name {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+/* Compact fields */
+.ep-day-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.ep-field-row {
+    margin-bottom: 8px;
+}
+
+.ep-field-label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+
+.ep-input-sm {
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+}
+
+/* Sessions */
+.ep-sessions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.ep-session {
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--border-radius-btn);
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.ep-session-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.ep-session-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.ep-session-delete {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.6;
+    transition: opacity var(--transition);
+}
+
+.ep-session-delete:hover {
+    opacity: 1;
+}
+
+.ep-session-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.ep-session-fields .ep-field-row:last-child {
+    margin-bottom: 0;
+}
+
+.ep-session-fields select.form-control {
+    padding: 8px 10px;
+    font-size: 13px;
+}
+
+.ep-session-details {
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.06);
+}
+
+/* Exercise group checkboxes */
+.ep-group-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ep-check-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.ep-check-label input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+}
+
+/* Add session button */
+.ep-add-session-btn {
+    width: 100%;
+    padding: 8px;
+    font-size: 13px;
+}
+
+/* Save button */
+.ep-save-btn {
+    margin-top: 16px;
+    margin-bottom: 12px;
+    padding: 14px;
+    font-size: 15px;
+}
+
+/* Confirm */
+.ep-confirm {
+    text-align: center;
+    padding: 16px;
+    animation: viewFadeIn 0.3s ease;
+}
+
+/* ===== Exercise editor ===== */
+
+.ep-group-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.ep-group-tab {
+    padding: 8px 14px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color var(--transition), color var(--transition), background-color var(--transition);
+}
+
+.ep-group-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background-color: rgba(233, 69, 96, 0.08);
+}
+
+.ep-exercises-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.ep-exercise-card {
+    padding: 14px;
+}
+
+.ep-exercise-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.ep-exercise-delete {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.6;
+    transition: opacity var(--transition);
+}
+
+.ep-exercise-delete:hover {
+    opacity: 1;
+}
+
+.ep-exercise-inline {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+}
+
+.ep-add-exercise-btn {
+    margin-bottom: 8px;
+}
+
 /* ===== Responsive — Desktop ===== */
 @media (min-width: 768px) {
     .app-container {
