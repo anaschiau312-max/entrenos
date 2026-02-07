@@ -1,4 +1,4 @@
-// Workout Log View — Manual registration form
+// Workout Log View — Manual registration form + OCR
 // Supports running and strength session types
 
 const WorkoutLogView = {
@@ -9,13 +9,22 @@ const WorkoutLogView = {
         sessions: [],
         allExercises: null,
         existingLog: null,
-        activeSessionIndex: 0
+        activeSessionIndex: 0,
+        ocrFile: null,
+        ocrPreviewUrl: null,
+        ocrData: null,
+        ocrScreenshotUrl: null
     },
 
     async render() {
         const s = this.state;
         s.selectedDate = Utils.formatDate(new Date());
         s.allExercises = await DB.getAllExercises();
+        // Reset OCR state on fresh render
+        s.ocrFile = null;
+        s.ocrPreviewUrl = null;
+        s.ocrData = null;
+        s.ocrScreenshotUrl = null;
 
         // Load day data and existing log
         await this.loadDayData();
@@ -86,6 +95,11 @@ const WorkoutLogView = {
 
         // Reference section
         html += this.renderReference(session);
+
+        // OCR section (only for running sessions)
+        if (session.type === 'running') {
+            html += this.renderOcrSection();
+        }
 
         // Form fields per type
         if (session.type === 'running') {
@@ -175,6 +189,59 @@ const WorkoutLogView = {
             <div class="expandable-body">
                 ${detailsHtml}
             </div>
+        </div>`;
+    },
+
+    renderOcrSection() {
+        return `
+        <div class="card wl-ocr-card" id="wl-ocr-section">
+            <div class="wl-ocr-header">
+                <div class="wl-ocr-title-row">
+                    <span class="wl-ocr-icon">📷</span>
+                    <div>
+                        <div class="card-title">Captura del reloj</div>
+                        <div class="text-xs text-muted">Sube una captura y extraeremos los datos automáticamente</div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="file" id="wl-ocr-file" accept="image/*" capture="environment" style="display:none;">
+
+            <div id="wl-ocr-upload-area" class="wl-ocr-upload-area">
+                <div class="wl-ocr-upload-content">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <span class="wl-ocr-upload-text">Pulsa para subir captura del reloj</span>
+                    <span class="text-xs text-muted">JPG, PNG — máx. 10MB</span>
+                </div>
+            </div>
+
+            <div id="wl-ocr-preview" class="wl-ocr-preview" style="display:none;">
+                <img id="wl-ocr-preview-img" class="wl-ocr-preview-img" src="" alt="Preview">
+                <button class="wl-ocr-remove" id="wl-ocr-remove" title="Quitar imagen">&times;</button>
+            </div>
+
+            <div id="wl-ocr-actions" style="display:none;">
+                <button class="btn btn-primary btn-full wl-ocr-analyze-btn" id="wl-ocr-analyze">
+                    🔍 Analizar con IA
+                </button>
+            </div>
+
+            <div id="wl-ocr-loading" class="wl-ocr-loading" style="display:none;">
+                <div class="spinner"></div>
+                <span>Analizando captura...</span>
+            </div>
+
+            <div id="wl-ocr-result" class="wl-ocr-result" style="display:none;">
+                <div class="wl-ocr-result-badge">✨ Datos extraídos por IA</div>
+                <div class="wl-ocr-result-fields" id="wl-ocr-result-fields"></div>
+                <div class="text-xs text-muted mt-8">Revisa y corrige los datos antes de guardar</div>
+            </div>
+
+            <div id="wl-ocr-error" class="wl-ocr-error" style="display:none;"></div>
         </div>`;
     },
 
@@ -430,6 +497,9 @@ const WorkoutLogView = {
             });
         });
 
+        // OCR event handlers
+        this.mountOcr();
+
         // Running form: auto pace calculation
         const distInput = document.getElementById('wl-distance');
         const durHInput = document.getElementById('wl-dur-h');
@@ -523,6 +593,189 @@ const WorkoutLogView = {
         }
     },
 
+    // === OCR Methods ===
+
+    mountOcr() {
+        const fileInput = document.getElementById('wl-ocr-file');
+        const uploadArea = document.getElementById('wl-ocr-upload-area');
+        const removeBtn = document.getElementById('wl-ocr-remove');
+        const analyzeBtn = document.getElementById('wl-ocr-analyze');
+
+        if (!fileInput || !uploadArea) return;
+
+        // Click upload area to trigger file input
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // File selected
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validate file
+            if (!file.type.startsWith('image/')) {
+                this.showOcrError('Selecciona un archivo de imagen (JPG, PNG).');
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                this.showOcrError('La imagen es demasiado grande (máx. 10MB).');
+                return;
+            }
+
+            this.state.ocrFile = file;
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                this.state.ocrPreviewUrl = ev.target.result;
+                document.getElementById('wl-ocr-preview-img').src = ev.target.result;
+                document.getElementById('wl-ocr-upload-area').style.display = 'none';
+                document.getElementById('wl-ocr-preview').style.display = 'block';
+                document.getElementById('wl-ocr-actions').style.display = 'block';
+                document.getElementById('wl-ocr-error').style.display = 'none';
+                document.getElementById('wl-ocr-result').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Remove image
+        if (removeBtn) {
+            removeBtn.addEventListener('click', () => {
+                this.state.ocrFile = null;
+                this.state.ocrPreviewUrl = null;
+                this.state.ocrData = null;
+                fileInput.value = '';
+                document.getElementById('wl-ocr-preview').style.display = 'none';
+                document.getElementById('wl-ocr-actions').style.display = 'none';
+                document.getElementById('wl-ocr-result').style.display = 'none';
+                document.getElementById('wl-ocr-error').style.display = 'none';
+                document.getElementById('wl-ocr-upload-area').style.display = 'flex';
+                // Remove AI badges from fields
+                document.querySelectorAll('.wl-ai-badge').forEach(b => b.remove());
+            });
+        }
+
+        // Analyze button
+        if (analyzeBtn) {
+            analyzeBtn.addEventListener('click', () => this.handleOcrAnalyze());
+        }
+    },
+
+    async handleOcrAnalyze() {
+        const file = this.state.ocrFile;
+        if (!file) return;
+
+        const analyzeBtn = document.getElementById('wl-ocr-analyze');
+        const loadingEl = document.getElementById('wl-ocr-loading');
+        const resultEl = document.getElementById('wl-ocr-result');
+        const errorEl = document.getElementById('wl-ocr-error');
+
+        // Show loading
+        analyzeBtn.style.display = 'none';
+        loadingEl.style.display = 'flex';
+        resultEl.style.display = 'none';
+        errorEl.style.display = 'none';
+
+        try {
+            // Resize if needed and get base64
+            const { base64, mimeType } = await OCR.resizeImage(file);
+
+            // Upload screenshot to Storage (in background)
+            const uploadPromise = OCR.uploadScreenshot(file).then(url => {
+                this.state.ocrScreenshotUrl = url;
+            }).catch(err => {
+                console.warn('Screenshot upload failed (non-blocking):', err);
+            });
+
+            // Extract data via Gemini
+            const data = await OCR.extractDataFromImage(base64, mimeType);
+            this.state.ocrData = data;
+
+            // Wait for upload to finish
+            await uploadPromise;
+
+            // Map data to form fields
+            const mappings = OCR.mapDataToFields(data);
+
+            if (mappings.length === 0) {
+                this.showOcrError('No se pudieron extraer datos de la imagen. Intenta con otra captura o rellena manualmente.');
+                loadingEl.style.display = 'none';
+                analyzeBtn.style.display = 'block';
+                return;
+            }
+
+            // Fill form fields
+            this.fillFormFromOcr(mappings);
+
+            // Show result summary
+            let fieldsHtml = '';
+            for (const m of mappings) {
+                fieldsHtml += `<span class="wl-ocr-field-chip">${m.label}: <strong>${m.value}</strong></span>`;
+            }
+            document.getElementById('wl-ocr-result-fields').innerHTML = fieldsHtml;
+
+            loadingEl.style.display = 'none';
+            resultEl.style.display = 'block';
+
+        } catch (err) {
+            console.error('OCR error:', err);
+            loadingEl.style.display = 'none';
+            analyzeBtn.style.display = 'block';
+            this.showOcrError(err.message || 'Error al analizar la imagen. Puedes rellenar los datos manualmente.');
+        }
+    },
+
+    fillFormFromOcr(mappings) {
+        // Remove existing AI badges
+        document.querySelectorAll('.wl-ai-badge').forEach(b => b.remove());
+
+        for (const m of mappings) {
+            const el = document.getElementById(m.fieldId);
+            if (!el) continue;
+
+            el.value = m.value;
+
+            // Add AI badge next to the field's label
+            const formGroup = el.closest('.form-group') || el.closest('.wl-duration-field');
+            if (formGroup) {
+                const label = formGroup.querySelector('label');
+                if (label && !label.querySelector('.wl-ai-badge')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'wl-ai-badge';
+                    badge.textContent = '✨ IA';
+                    label.appendChild(badge);
+                }
+            }
+        }
+
+        // Open advanced section if any advanced fields were filled
+        const advancedFields = ['wl-gct-balance', 'wl-gct', 'wl-vo2max'];
+        const hasAdvanced = mappings.some(m => advancedFields.includes(m.fieldId));
+        if (hasAdvanced) {
+            const advToggle = document.getElementById('wl-advanced-toggle');
+            const advBody = document.getElementById('wl-advanced-body');
+            if (advToggle && advBody && !advBody.classList.contains('open')) {
+                advToggle.classList.add('expanded');
+                advBody.classList.add('open');
+            }
+        }
+
+        // Scroll to form
+        const formCard = document.getElementById('wl-running-form');
+        if (formCard) {
+            formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    },
+
+    showOcrError(msg) {
+        const errorEl = document.getElementById('wl-ocr-error');
+        if (errorEl) {
+            errorEl.textContent = msg;
+            errorEl.style.display = 'block';
+        }
+    },
+
+    // === Save ===
+
     async handleSave() {
         const s = this.state;
         const session = s.sessions[s.activeSessionIndex];
@@ -612,6 +865,14 @@ const WorkoutLogView = {
                 ground_contact_time: parseInt(document.getElementById('wl-gct').value) || null,
                 vo2max: parseFloat(document.getElementById('wl-vo2max').value) || null
             };
+
+            // Include screenshot URL if OCR was used
+            if (s.ocrScreenshotUrl) {
+                base.screenshotUrl = s.ocrScreenshotUrl;
+            }
+            if (s.ocrData) {
+                base.ocrUsed = true;
+            }
         }
 
         if (session.type === 'strength') {

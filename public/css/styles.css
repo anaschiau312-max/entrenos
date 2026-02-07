@@ -1584,6 +1584,181 @@ textarea.form-control {
     margin-bottom: 16px;
 }
 
+/* === OCR Section === */
+
+.wl-ocr-card {
+    margin-bottom: 16px;
+    border: 1px dashed rgba(233, 69, 96, 0.3);
+}
+
+.wl-ocr-header {
+    margin-bottom: 12px;
+}
+
+.wl-ocr-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.wl-ocr-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    line-height: 1.2;
+}
+
+/* Upload area */
+.wl-ocr-upload-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-btn);
+    padding: 24px 16px;
+    cursor: pointer;
+    transition: border-color var(--transition), background-color var(--transition);
+}
+
+.wl-ocr-upload-area:hover,
+.wl-ocr-upload-area:active {
+    border-color: var(--accent);
+    background-color: rgba(233, 69, 96, 0.04);
+}
+
+.wl-ocr-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+}
+
+.wl-ocr-upload-content svg {
+    opacity: 0.5;
+}
+
+.wl-ocr-upload-text {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Image preview */
+.wl-ocr-preview {
+    position: relative;
+    border-radius: var(--border-radius-btn);
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.wl-ocr-preview-img {
+    width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+    border-radius: var(--border-radius-btn);
+    background-color: rgba(0, 0, 0, 0.3);
+    display: block;
+}
+
+.wl-ocr-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition);
+}
+
+.wl-ocr-remove:hover {
+    background-color: var(--danger);
+}
+
+/* Analyze button */
+.wl-ocr-analyze-btn {
+    margin-bottom: 4px;
+}
+
+/* Loading state */
+.wl-ocr-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* Result badge */
+.wl-ocr-result {
+    padding: 12px 0 0;
+    animation: viewFadeIn 0.3s ease;
+}
+
+.wl-ocr-result-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: rgba(156, 39, 176, 0.15);
+    color: var(--purple);
+    margin-bottom: 10px;
+}
+
+.wl-ocr-result-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.wl-ocr-field-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 12px;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+}
+
+.wl-ocr-field-chip strong {
+    color: var(--text-primary);
+}
+
+/* OCR error */
+.wl-ocr-error {
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: var(--border-radius-btn);
+    background-color: rgba(244, 67, 54, 0.12);
+    color: var(--danger);
+    font-size: 13px;
+}
+
+/* AI badge on form labels */
+.wl-ai-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    background-color: rgba(156, 39, 176, 0.15);
+    color: var(--purple);
+    vertical-align: middle;
+}
+
 /* ===== Responsive — Desktop ===== */
 @media (min-width: 768px) {
     .app-container {
