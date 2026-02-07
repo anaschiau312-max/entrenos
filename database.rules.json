@@ -1,0 +1,28 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'coach'",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "plan": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "exercises": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "workoutLogs": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'coach'",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "phases": {
+      ".read": "auth != null",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'coach'"
+    }
+  }
+}
