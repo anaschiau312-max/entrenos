@@ -114,6 +114,9 @@ const DB = {
                     const idx = sessions.findIndex(s => s.id === logData.sessionId);
                     if (idx !== -1) {
                         await db.ref(`${sessionsPath}/${idx}/completed`).set(true);
+                        // Invalidar caché para que se recarguen los datos actualizados
+                        Offline.removeCache('plan');
+                        Offline.removeCache(`week_${logData.weekId}`);
                     }
                 }
             } catch (e) {
@@ -209,5 +212,46 @@ const DB = {
 
     async getUserProfile(uid) {
         return await Offline.fetch(`users/${uid}`, `profile_${uid}`);
+    },
+
+    // ===== HELPERS PARA LOGS =====
+
+    // Obtiene todos los logs de una fecha específica (incluyendo multi-sesión)
+    getLogsForDate(logs, dateStr) {
+        const prefix = `log_${dateStr.replace(/-/g, '')}`;
+        const dayLogs = {};
+        for (const [logId, log] of Object.entries(logs || {})) {
+            if (logId === prefix || logId.startsWith(prefix + '_s')) {
+                dayLogs[logId] = log;
+            }
+        }
+        return dayLogs;
+    },
+
+    // Verifica si una sesión está completada (con fallback a logs)
+    isSessionCompleted(session, logsForDay) {
+        // Primero verificar flag directo en el plan
+        if (session.completed) return true;
+
+        // Fallback: buscar log que coincida con sessionId
+        for (const log of Object.values(logsForDay || {})) {
+            if (log.sessionId === session.id && log.actual && log.actual.completed) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    // Obtiene el log específico de una sesión
+    getLogForSession(session, sessionIndex, logsForDay) {
+        // Buscar por sessionId primero
+        for (const log of Object.values(logsForDay || {})) {
+            if (log.sessionId === session.id) return log;
+        }
+        // Fallback: buscar por sessionIndex
+        for (const log of Object.values(logsForDay || {})) {
+            if (log.sessionIndex === sessionIndex) return log;
+        }
+        return null;
     }
 };

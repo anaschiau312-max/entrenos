@@ -65,14 +65,22 @@ const WeeklyView = {
             const sessions = day.sessions || [];
             const isRest = sessions.length === 0;
 
-            totalSessions += sessions.length;
-            completedSessions += sessions.filter(s => s.completed).length;
+            // Obtener todos los logs del día (soporta multi-sesión)
+            const dayLogs = DB.getLogsForDate(this.logs, dateStr);
 
-            // Check for logged km
-            const logId = `log_${dateStr.replace(/-/g, '')}`;
-            const log = this.logs[logId];
-            if (log && log.actual && log.actual.distance_km) {
-                totalKm += log.actual.distance_km;
+            totalSessions += sessions.length;
+            // Contar sesiones completadas con fallback a logs
+            for (const session of sessions) {
+                if (DB.isSessionCompleted(session, dayLogs)) {
+                    completedSessions++;
+                }
+            }
+
+            // Sumar km de todos los logs del día
+            for (const log of Object.values(dayLogs)) {
+                if (log.actual && log.actual.distance_km) {
+                    totalKm += log.actual.distance_km;
+                }
             }
 
             // Session display
@@ -93,7 +101,7 @@ const WeeklyView = {
                     const isStrengthUpper = session.type === 'strength_upper';
                     const isStrengthLower = session.type === 'strength_lower';
                     const icon = isRunning ? '🏃' : isStrengthUpper ? '💪' : isStrengthLower ? '🦵' : isStrength ? '💪' : '🧘';
-                    const isCompleted = session.completed;
+                    const isCompleted = DB.isSessionCompleted(session, dayLogs);
                     const isPast = dateStr < today && !isCompleted;
 
                     sessionHtml += `
@@ -111,8 +119,8 @@ const WeeklyView = {
                         + `</div>`;
                 }
 
-                const allCompleted = sessions.every(s => s.completed);
-                const anyCompleted = sessions.some(s => s.completed);
+                const allCompleted = sessions.every(s => DB.isSessionCompleted(s, dayLogs));
+                const anyCompleted = sessions.some(s => DB.isSessionCompleted(s, dayLogs));
                 const isPastDay = dateStr < today;
 
                 if (allCompleted) {

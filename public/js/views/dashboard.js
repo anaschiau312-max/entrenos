@@ -13,9 +13,8 @@ const DashboardView = {
             DB.getTecnicaRespiracion()
         ]);
 
-        // Check if today has a log already
-        const todayLogId = `log_${today.replace(/-/g, '')}`;
-        const todayLog = logs ? logs[todayLogId] : null;
+        // Get all logs for today (supports multiple sessions)
+        const todayLogs = DB.getLogsForDate(logs, today);
 
         // Phase info
         const phaseKey = todayData ? todayData.phase : (weekData ? weekData.phase : null);
@@ -104,8 +103,8 @@ const DashboardView = {
         if (isRestDay) {
             html += this.renderRestDay(tipOfDay);
         } else {
-            for (const session of sessions) {
-                html += await this.renderSessionCard(session, todayData, todayLog, allExercises);
+            for (let i = 0; i < sessions.length; i++) {
+                html += await this.renderSessionCard(sessions[i], i, todayData, todayLogs, allExercises);
             }
         }
 
@@ -155,7 +154,7 @@ const DashboardView = {
         </div>`;
     },
 
-    async renderSessionCard(session, todayData, todayLog, allExercises) {
+    async renderSessionCard(session, sessionIndex, todayData, todayLogs, allExercises) {
         const isRunning = session.type === 'running';
         const isCycling = session.type === 'cycling';
         const isStrength = session.type === 'strength';
@@ -164,7 +163,10 @@ const DashboardView = {
         const icon = isRunning ? '🏃' : isCycling ? '🚴' : isStrengthUpper ? '💪' : isStrengthLower ? '🦵' : isStrength ? '💪' : '🧘';
         const badgeClass = isRunning ? 'badge-running' : isCycling ? 'badge-cycling' : (isStrength || isStrengthUpper || isStrengthLower) ? 'badge-strength' : 'badge-rest';
         const typeLabel = isRunning ? 'Carrera' : isCycling ? 'Ciclismo' : isStrengthUpper ? 'Fuerza superior' : isStrengthLower ? 'Fuerza inferior' : isStrength ? 'Fuerza' : 'Otro';
-        const isCompleted = session.completed || (todayLog && todayLog.actual && todayLog.actual.completed);
+
+        // Buscar el log específico de esta sesión
+        const sessionLog = DB.getLogForSession(session, sessionIndex, todayLogs);
+        const isCompleted = DB.isSessionCompleted(session, todayLogs);
 
         // Build expandable details
         let detailsHtml = '';
@@ -208,8 +210,8 @@ const DashboardView = {
 
         // Completed log summary
         let logSummaryHtml = '';
-        if (isCompleted && todayLog && todayLog.actual) {
-            const a = todayLog.actual;
+        if (isCompleted && sessionLog && sessionLog.actual) {
+            const a = sessionLog.actual;
             logSummaryHtml = `
                 <div class="divider"></div>
                 <div class="dash-log-summary">
