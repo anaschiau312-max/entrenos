@@ -70,8 +70,8 @@ const WeeklyView = {
 
             totalSessions += sessions.length;
             // Contar sesiones completadas con fallback a logs
-            for (const session of sessions) {
-                if (DB.isSessionCompleted(session, dayLogs)) {
+            for (let i = 0; i < sessions.length; i++) {
+                if (DB.isSessionCompleted(sessions[i], dayLogs, i)) {
                     completedSessions++;
                 }
             }
@@ -95,13 +95,14 @@ const WeeklyView = {
                     </div>`;
                 statusHtml = '<span class="status-dot rest"></span>';
             } else {
-                for (const session of sessions) {
+                for (let idx = 0; idx < sessions.length; idx++) {
+                    const session = sessions[idx];
                     const isRunning = session.type === 'running';
                     const isStrength = session.type === 'strength';
                     const isStrengthUpper = session.type === 'strength_upper';
                     const isStrengthLower = session.type === 'strength_lower';
                     const icon = isRunning ? '🏃' : isStrengthUpper ? '💪' : isStrengthLower ? '🦵' : isStrength ? '💪' : '🧘';
-                    const isCompleted = DB.isSessionCompleted(session, dayLogs);
+                    const isCompleted = DB.isSessionCompleted(session, dayLogs, idx);
                     const isPast = dateStr < today && !isCompleted;
 
                     sessionHtml += `
@@ -119,8 +120,8 @@ const WeeklyView = {
                         + `</div>`;
                 }
 
-                const allCompleted = sessions.every(s => DB.isSessionCompleted(s, dayLogs));
-                const anyCompleted = sessions.some(s => DB.isSessionCompleted(s, dayLogs));
+                const allCompleted = sessions.every((s, i) => DB.isSessionCompleted(s, dayLogs, i));
+                const anyCompleted = sessions.some((s, i) => DB.isSessionCompleted(s, dayLogs, i));
                 const isPastDay = dateStr < today;
 
                 if (allCompleted) {

@@ -229,13 +229,24 @@ const DB = {
     },
 
     // Verifica si una sesión está completada (con fallback a logs)
-    isSessionCompleted(session, logsForDay) {
+    isSessionCompleted(session, logsForDay, sessionIndex) {
         // Primero verificar flag directo en el plan
         if (session.completed) return true;
 
-        // Fallback: buscar log que coincida con sessionId
+        // Fallback: buscar log que coincida
         for (const log of Object.values(logsForDay || {})) {
-            if (log.sessionId === session.id && log.actual && log.actual.completed) {
+            if (!log.actual || !log.actual.completed) continue;
+
+            // Match por sessionId
+            if (log.sessionId && log.sessionId === session.id) {
+                return true;
+            }
+            // Match por sessionIndex
+            if (sessionIndex !== undefined && log.sessionIndex === sessionIndex) {
+                return true;
+            }
+            // Match por tipo de sesión (fallback para logs sin sessionId)
+            if (log.sessionType === session.type || (log.planned && log.planned.type === session.type)) {
                 return true;
             }
         }

@@ -21,16 +21,24 @@ const DashboardView = {
         const phase = phaseKey && phases ? phases[phaseKey] : null;
         const weekNumber = todayData ? todayData.weekNumber : (weekData ? weekData.weekNumber : null);
 
-        // Week progress
+        // Week progress (usando logs para verificar completado)
         let weekProgress = null;
         if (weekData && weekData.days) {
-            const totalSessions = Object.values(weekData.days)
-                .reduce((sum, day) => sum + (day.sessions ? day.sessions.length : 0), 0);
-            const completedSessions = Object.values(weekData.days)
-                .reduce((sum, day) => {
-                    if (!day.sessions) return sum;
-                    return sum + day.sessions.filter(s => s.completed).length;
-                }, 0);
+            let totalSessions = 0;
+            let completedSessions = 0;
+
+            for (const [dateStr, day] of Object.entries(weekData.days)) {
+                if (!day.sessions) continue;
+                totalSessions += day.sessions.length;
+
+                // Obtener logs del día para verificar completado
+                const dayLogs = DB.getLogsForDate(logs, dateStr);
+                for (let i = 0; i < day.sessions.length; i++) {
+                    if (DB.isSessionCompleted(day.sessions[i], dayLogs, i)) {
+                        completedSessions++;
+                    }
+                }
+            }
             weekProgress = { total: totalSessions, completed: completedSessions };
         }
 
@@ -166,7 +174,7 @@ const DashboardView = {
 
         // Buscar el log específico de esta sesión
         const sessionLog = DB.getLogForSession(session, sessionIndex, todayLogs);
-        const isCompleted = DB.isSessionCompleted(session, todayLogs);
+        const isCompleted = DB.isSessionCompleted(session, todayLogs, sessionIndex);
 
         // Build expandable details
         let detailsHtml = '';
