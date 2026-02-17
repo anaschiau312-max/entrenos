@@ -93,7 +93,12 @@ const WorkoutLogView = {
         if (s.sessions.length > 1) {
             html += `<div class="wl-session-tabs">`;
             s.sessions.forEach((ses, i) => {
-                const icon = ses.type === 'running' ? '🏃' : ses.type === 'cycling' ? '🚴' : ses.type === 'strength_upper' ? '💪' : ses.type === 'strength_lower' ? '🦵' : '💪';
+                const typeIcons = {
+                    'running': '🏃', 'cycling': '🚴', 'strength_upper': '💪', 'strength_lower': '🦵',
+                    'strength': '💪', 'mobility': '🧘', 'movilidad': '🧘', 'yoga': '🧘',
+                    'stretching': '🤸', 'rest': '😴', 'descanso': '😴'
+                };
+                const icon = typeIcons[ses.type] || '✅';
                 const active = i === s.activeSessionIndex ? 'active' : '';
                 html += `<button class="wl-session-tab ${active}" data-session-idx="${i}">${icon} ${ses.title}</button>`;
             });
@@ -115,6 +120,9 @@ const WorkoutLogView = {
             html += this.renderStrengthForm(session);
         } else if (session.type === 'strength_upper' || session.type === 'strength_lower') {
             html += this.renderStrengthCardioForm(session);
+        } else {
+            // Generic form for mobility, rest, yoga, etc.
+            html += this.renderGenericForm(session);
         }
 
         // OCR section AFTER form (optional, collapsible)
@@ -530,6 +538,58 @@ const WorkoutLogView = {
             </div>
         </div>`;
     },
+
+    renderGenericForm(session) {
+        const log = this.getExistingLogForSession(this.state.activeSessionIndex);
+        const a = log ? (log.actual || {}) : {};
+
+        // Parse existing duration
+        let durH = '', durM = '', durS = '';
+        if (a.duration) {
+            const parts = a.duration.split(':');
+            if (parts.length === 3) { durH = parts[0]; durM = parts[1]; durS = parts[2]; }
+            else if (parts.length === 2) { durH = '0'; durM = parts[0]; durS = parts[1]; }
+        }
+
+        const typeIcons = {
+            'mobility': '🧘',
+            'movilidad': '🧘',
+            'yoga': '🧘',
+            'stretching': '🤸',
+            'rest': '😴',
+            'descanso': '😴'
+        };
+        const icon = typeIcons[session.type] || '✅';
+        const typeLabel = session.title || session.type;
+
+        return `
+        <div class="card wl-form-card" id="wl-generic-form">
+            <div class="card-header">
+                <span class="card-title">${icon} ${typeLabel}</span>
+            </div>
+
+            <div class="form-group">
+                <label>Duración (opcional)</label>
+                <div class="wl-duration-inputs">
+                    <div class="wl-duration-field">
+                        <input type="number" id="wl-dur-h" class="form-control" inputmode="numeric" min="0" max="23" placeholder="HH" value="${durH}">
+                        <span class="wl-duration-label">h</span>
+                    </div>
+                    <span class="wl-duration-sep">:</span>
+                    <div class="wl-duration-field">
+                        <input type="number" id="wl-dur-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="${durM}">
+                        <span class="wl-duration-label">min</span>
+                    </div>
+                    <span class="wl-duration-sep">:</span>
+                    <div class="wl-duration-field">
+                        <input type="number" id="wl-dur-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="${durS}">
+                        <span class="wl-duration-label">seg</span>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    },
+
     renderStrengthForm(session) {
         const log = this.getExistingLogForSession(this.state.activeSessionIndex);
         const logExercises = log && log.actual ? (log.actual.exercises || {}) : {};
@@ -1112,6 +1172,21 @@ const WorkoutLogView = {
             if (s.ocrData) {
                 base.ocrUsed = true;
             }
+        }
+
+        // Generic session types (mobility, yoga, rest, etc.)
+        if (!base.actual) {
+            const h = parseInt(document.getElementById('wl-dur-h')?.value) || 0;
+            const m = parseInt(document.getElementById('wl-dur-m')?.value) || 0;
+            const sec = parseInt(document.getElementById('wl-dur-s')?.value) || 0;
+            const duration = (h + m + sec > 0)
+                ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
+                : null;
+
+            base.actual = {
+                completed: true,
+                duration
+            };
         }
 
         // Common fields
