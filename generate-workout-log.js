@@ -1,4 +1,6 @@
-// Workout Log View — Manual registration form + OCR
+const fs = require('fs');
+
+const content = `// Workout Log View — Manual registration form + OCR
 // Supports running and strength session types
 
 const WorkoutLogView = {
@@ -37,12 +39,11 @@ const WorkoutLogView = {
         s.dayData = await DB.getDayData(s.selectedDate);
         s.sessions = (s.dayData && s.dayData.day && s.dayData.day.sessions) ? s.dayData.day.sessions : [];
 
-        // Check for existing log (include session index)
+        // Check for existing log
         const uid = window.currentUser.uid;
-        const baseLogId = `log_${s.selectedDate.replace(/-/g, '')}`;
+        const logId = \`log_\${s.selectedDate.replace(/-/g, '')}\`;
         const logs = await DB.getWorkoutLogs(uid);
-        // Will be set per session in getExistingLogForSession
-        s.allLogs = logs || {};
+        s.existingLog = logs ? logs[logId] : null;
 
         // Pick first uncompleted session, or first one
         s.activeSessionIndex = 0;
@@ -51,53 +52,44 @@ const WorkoutLogView = {
             if (idx !== -1) s.activeSessionIndex = idx;
         }
     },
-    getExistingLogForSession(sessionIndex) {
-        const s = this.state;
-        const baseLogId = `log_${s.selectedDate.replace(/-/g, '')}`;
-        // Try session-specific log first, then fall back to base log
-        const sessionLogId = `${baseLogId}_s${sessionIndex}`;
-        return s.allLogs[sessionLogId] || s.allLogs[baseLogId] || null;
-    },
-
-
 
     renderForm() {
         const s = this.state;
         const dateDisplay = Utils.formatDateDisplay(s.selectedDate);
-        const isEditing = !!this.getExistingLogForSession(s.activeSessionIndex);
+        const isEditing = !!s.existingLog;
 
-        let html = `
+        let html = \`
         <div class="wl-header">
-            <h1 class="section-title">${isEditing ? 'Editar registro' : 'Registrar entrenamiento'}</h1>
+            <h1 class="section-title">\${isEditing ? 'Editar registro' : 'Registrar entrenamiento'}</h1>
         </div>
 
         <div class="form-group">
             <label for="wl-date">Fecha</label>
-            <input type="date" id="wl-date" class="form-control" value="${s.selectedDate}">
-            <div class="wl-date-display text-sm text-muted mt-8">${dateDisplay}</div>
-        </div>`;
+            <input type="date" id="wl-date" class="form-control" value="\${s.selectedDate}">
+            <div class="wl-date-display text-sm text-muted mt-8">\${dateDisplay}</div>
+        </div>\`;
 
         // No sessions for this date
         if (s.sessions.length === 0) {
-            html += `
+            html += \`
             <div class="card wl-no-session">
                 <div class="empty-state">
                     <div class="empty-state-icon">📅</div>
                     <p class="empty-state-text">No hay sesión planificada para este día.</p>
                 </div>
-            </div>`;
+            </div>\`;
             return html;
         }
 
         // Session selector tabs (if multiple sessions)
         if (s.sessions.length > 1) {
-            html += `<div class="wl-session-tabs">`;
+            html += \`<div class="wl-session-tabs">\`;
             s.sessions.forEach((ses, i) => {
                 const icon = ses.type === 'running' ? '🏃' : ses.type === 'cycling' ? '🚴' : ses.type === 'strength_upper' ? '💪' : ses.type === 'strength_lower' ? '🦵' : '💪';
                 const active = i === s.activeSessionIndex ? 'active' : '';
-                html += `<button class="wl-session-tab ${active}" data-session-idx="${i}">${icon} ${ses.title}</button>`;
+                html += \`<button class="wl-session-tab \${active}" data-session-idx="\${i}">\${icon} \${ses.title}</button>\`;
             });
-            html += `</div>`;
+            html += \`</div>\`;
         }
 
         // Active session
@@ -128,7 +120,7 @@ const WorkoutLogView = {
         html += this.renderCommonFields();
 
         // Save button
-        html += `
+        html += \`
         <button class="btn btn-primary btn-full wl-save-btn" id="wl-save">
             💾 Guardar registro
         </button>
@@ -137,7 +129,7 @@ const WorkoutLogView = {
             <div class="wl-confirm-icon">✅</div>
             <p class="wl-confirm-text">¡Registro guardado correctamente!</p>
             <button class="btn btn-secondary btn-full mt-16" id="wl-go-dashboard">Volver al dashboard</button>
-        </div>`;
+        </div>\`;
 
         return html;
     },
@@ -150,28 +142,28 @@ const WorkoutLogView = {
         let detailsHtml = '';
         // Show description if available
         if (session.description) {
-            detailsHtml = `
+            detailsHtml = \`
                 <div class="wl-ref-details">
-                    <p class="text-sm" style="color: var(--text-secondary); line-height: 1.5;">${session.description}</p>
-                </div>`;
+                    <p class="text-sm" style="color: var(--text-secondary); line-height: 1.5;">\${session.description}</p>
+                </div>\`;
         } else if ((session.type === 'running' || session.type === 'cycling') && session.details) {
-            detailsHtml = `
+            detailsHtml = \`
                 <div class="wl-ref-details">
-                    ${session.description ? `<p class="text-sm text-muted mb-8">${session.description}</p>` : ''}
+                    \${session.description ? \`<p class="text-sm text-muted mb-8">\${session.description}</p>\` : ''}
                     <div class="dash-detail-row">
                         <span class="dash-detail-label">Calentamiento</span>
-                        <span class="dash-detail-value">${session.details.warmup}</span>
+                        <span class="dash-detail-value">\${session.details.warmup}</span>
                     </div>
                     <div class="dash-detail-row">
                         <span class="dash-detail-label">Principal</span>
-                        <span class="dash-detail-value">${session.details.main}</span>
+                        <span class="dash-detail-value">\${session.details.main}</span>
                     </div>
                     <div class="dash-detail-row">
                         <span class="dash-detail-label">Vuelta a la calma</span>
-                        <span class="dash-detail-value">${session.details.cooldown}</span>
+                        <span class="dash-detail-value">\${session.details.cooldown}</span>
                     </div>
-                    ${session.notes ? `<div class="dash-detail-row"><span class="dash-detail-label">Notas</span><span class="dash-detail-value">${session.notes}</span></div>` : ''}
-                </div>`;
+                    \${session.notes ? \`<div class="dash-detail-row"><span class="dash-detail-label">Notas</span><span class="dash-detail-value">\${session.notes}</span></div>\` : ''}
+                </div>\`;
         }
 
         if (session.type === 'strength' && session.exerciseGroup && this.state.allExercises) {
@@ -179,28 +171,28 @@ const WorkoutLogView = {
             for (const groupKey of session.exerciseGroup) {
                 const group = this.state.allExercises[groupKey];
                 if (!group || !group.exercises) continue;
-                detailsHtml += `<div class="dash-exercise-group-name">${group.name}</div>`;
+                detailsHtml += \`<div class="dash-exercise-group-name">\${group.name}</div>\`;
                 for (const [, ex] of Object.entries(group.exercises)) {
-                    detailsHtml += `
+                    detailsHtml += \`
                         <div class="dash-exercise-item">
-                            <span class="dash-exercise-name">${ex.name}</span>
-                            <span class="dash-exercise-sets">${ex.sets} x ${ex.reps}</span>
-                        </div>`;
+                            <span class="dash-exercise-name">\${ex.name}</span>
+                            <span class="dash-exercise-sets">\${ex.sets} x \${ex.reps}</span>
+                        </div>\`;
                 }
             }
             detailsHtml += '</div>';
         }
 
-        return `
+        return \`
         <div class="card wl-reference" data-expandable>
             <div class="expandable-header" data-toggle="expand">
                 <div class="wl-ref-header">
-                    <span class="wl-ref-icon">${icon}</span>
+                    <span class="wl-ref-icon">\${icon}</span>
                     <div class="wl-ref-info">
-                        <div class="wl-ref-title">${session.title}</div>
+                        <div class="wl-ref-title">\${session.title}</div>
                         <div class="wl-ref-meta">
-                            <span class="badge ${badgeClass}">${typeLabel}</span>
-                            <span class="text-sm text-muted">${session.duration}'</span>
+                            <span class="badge \${badgeClass}">\${typeLabel}</span>
+                            <span class="text-sm text-muted">\${session.duration}'</span>
                         </div>
                     </div>
                 </div>
@@ -209,18 +201,18 @@ const WorkoutLogView = {
                 </span>
             </div>
             <div class="expandable-body">
-                ${detailsHtml}
+                \${detailsHtml}
             </div>
-        </div>`;
+        </div>\`;
     },
 
     renderOcrSection(collapsed = false) {
         const collapsedClass = collapsed ? '' : 'expanded';
         const bodyClass = collapsed ? '' : 'open';
 
-        return `
+        return \`
         <div class="card wl-ocr-card" id="wl-ocr-section" data-expandable>
-            <div class="expandable-header wl-ocr-header ${collapsedClass}" data-toggle="ocr-expand">
+            <div class="expandable-header wl-ocr-header \${collapsedClass}" data-toggle="ocr-expand">
                 <div class="wl-ocr-title-row">
                     <span class="wl-ocr-icon">📷</span>
                     <div>
@@ -233,7 +225,7 @@ const WorkoutLogView = {
                 </span>
             </div>
 
-            <div class="expandable-body wl-ocr-body ${bodyClass}">
+            <div class="expandable-body wl-ocr-body \${bodyClass}">
                 <input type="file" id="wl-ocr-file" accept="image/*" style="display:none;">
 
                 <div id="wl-ocr-upload-area" class="wl-ocr-upload-area">
@@ -272,11 +264,11 @@ const WorkoutLogView = {
 
                 <div id="wl-ocr-error" class="wl-ocr-error" style="display:none;"></div>
             </div>
-        </div>`;
+        </div>\`;
     },
 
     renderRunningForm(session) {
-        const log = this.getExistingLogForSession(this.state.activeSessionIndex);
+        const log = this.state.existingLog;
         const a = log ? (log.actual || {}) : {};
 
         // Parse existing duration
@@ -287,7 +279,7 @@ const WorkoutLogView = {
             else if (parts.length === 2) { durH = '0'; durM = parts[0]; durS = parts[1]; }
         }
 
-        return `
+        return \`
         <div class="card wl-form-card" id="wl-running-form">
             <div class="card-header">
                 <span class="card-title">Datos de carrera</span>
@@ -295,24 +287,24 @@ const WorkoutLogView = {
 
             <div class="form-group">
                 <label for="wl-distance">Distancia (km)</label>
-                <input type="number" id="wl-distance" class="form-control" inputmode="decimal" step="0.01" min="0" placeholder="Ej: 8.5" value="${a.distance_km || ''}">
+                <input type="number" id="wl-distance" class="form-control" inputmode="decimal" step="0.01" min="0" placeholder="Ej: 8.5" value="\${a.distance_km || ''}">
             </div>
 
             <div class="form-group">
                 <label>Duración</label>
                 <div class="wl-duration-inputs">
                     <div class="wl-duration-field">
-                        <input type="number" id="wl-dur-h" class="form-control" inputmode="numeric" min="0" max="23" placeholder="HH" value="${durH}">
+                        <input type="number" id="wl-dur-h" class="form-control" inputmode="numeric" min="0" max="23" placeholder="HH" value="\${durH}">
                         <span class="wl-duration-label">h</span>
                     </div>
                     <span class="wl-duration-sep">:</span>
                     <div class="wl-duration-field">
-                        <input type="number" id="wl-dur-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="${durM}">
+                        <input type="number" id="wl-dur-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="\${durM}">
                         <span class="wl-duration-label">min</span>
                     </div>
                     <span class="wl-duration-sep">:</span>
                     <div class="wl-duration-field">
-                        <input type="number" id="wl-dur-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="${durS}">
+                        <input type="number" id="wl-dur-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="\${durS}">
                         <span class="wl-duration-label">seg</span>
                     </div>
                 </div>
@@ -320,40 +312,40 @@ const WorkoutLogView = {
 
             <div class="form-group">
                 <label for="wl-pace">Ritmo medio (min/km)</label>
-                <input type="text" id="wl-pace" class="form-control" placeholder="Ej: 5:30" value="${a.pace_avg || ''}">
+                <input type="text" id="wl-pace" class="form-control" placeholder="Ej: 5:30" value="\${a.pace_avg || ''}">
                 <div class="text-xs text-muted mt-8" id="wl-pace-auto"></div>
             </div>
 
             <div class="wl-metrics-grid">
                 <div class="form-group">
                     <label for="wl-hr">FC media (bpm)</label>
-                    <input type="number" id="wl-hr" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Ej: 155" value="${a.heart_rate_avg || ''}">
+                    <input type="number" id="wl-hr" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Ej: 155" value="\${a.heart_rate_avg || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-cadence">Cadencia (ppm)</label>
-                    <input type="number" id="wl-cadence" class="form-control" inputmode="numeric" min="0" max="300" placeholder="Ej: 172" value="${a.cadence || ''}">
+                    <input type="number" id="wl-cadence" class="form-control" inputmode="numeric" min="0" max="300" placeholder="Ej: 172" value="\${a.cadence || ''}">
                 </div>
             </div>
 
             <div class="wl-metrics-grid">
                 <div class="form-group">
                     <label for="wl-steps">Pasos totales</label>
-                    <input type="number" id="wl-steps" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 8500" value="${a.steps || ''}">
+                    <input type="number" id="wl-steps" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 8500" value="\${a.steps || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-stride">Longitud paso (m)</label>
-                    <input type="number" id="wl-stride" class="form-control" inputmode="decimal" step="0.01" min="0" placeholder="Ej: 1.05" value="${a.stride_length || ''}">
+                    <input type="number" id="wl-stride" class="form-control" inputmode="decimal" step="0.01" min="0" placeholder="Ej: 1.05" value="\${a.stride_length || ''}">
                 </div>
             </div>
 
             <div class="wl-metrics-grid">
                 <div class="form-group">
                     <label for="wl-elevation">Ascenso total (m)</label>
-                    <input type="number" id="wl-elevation" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 120" value="${a.elevation_gain || ''}">
+                    <input type="number" id="wl-elevation" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 120" value="\${a.elevation_gain || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-power">Potencia (W)</label>
-                    <input type="number" id="wl-power" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 230" value="${a.power || ''}">
+                    <input type="number" id="wl-power" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 230" value="\${a.power || ''}">
                 </div>
             </div>
 
@@ -366,24 +358,24 @@ const WorkoutLogView = {
             <div class="wl-advanced-body" id="wl-advanced-body">
                 <div class="form-group">
                     <label for="wl-gct-balance">Equilibrio contacto suelo (%)</label>
-                    <input type="text" id="wl-gct-balance" class="form-control" placeholder="Ej: 49.8/50.2" value="${a.gct_balance || ''}">
+                    <input type="text" id="wl-gct-balance" class="form-control" placeholder="Ej: 49.8/50.2" value="\${a.gct_balance || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-gct">Tiempo contacto suelo (ms)</label>
-                    <input type="number" id="wl-gct" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 245" value="${a.ground_contact_time || ''}">
+                    <input type="number" id="wl-gct" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 245" value="\${a.ground_contact_time || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-vo2max">VO2 Max estimado</label>
-                    <input type="number" id="wl-vo2max" class="form-control" inputmode="decimal" step="0.1" min="0" placeholder="Ej: 42.5" value="${a.vo2max || ''}">
+                    <input type="number" id="wl-vo2max" class="form-control" inputmode="decimal" step="0.1" min="0" placeholder="Ej: 42.5" value="\${a.vo2max || ''}">
                 </div>
             </div>
-        </div>`;
+        </div>\`;
     },
 
 
 
     renderCyclingForm(session) {
-        const log = this.getExistingLogForSession(this.state.activeSessionIndex);
+        const log = this.state.existingLog;
         const a = log ? (log.actual || {}) : {};
 
         // Parse existing duration
@@ -394,7 +386,7 @@ const WorkoutLogView = {
             else if (parts.length === 2) { durH = '0'; durM = parts[0]; durS = parts[1]; }
         }
 
-        return `
+        return \`
         <div class="card wl-form-card" id="wl-cycling-form">
             <div class="card-header">
                 <span class="card-title">🚴 Datos de ciclismo</span>
@@ -404,17 +396,17 @@ const WorkoutLogView = {
                 <label>Duración</label>
                 <div class="wl-duration-inputs">
                     <div class="wl-duration-field">
-                        <input type="number" id="wl-dur-h" class="form-control" inputmode="numeric" min="0" max="23" placeholder="HH" value="${durH}">
+                        <input type="number" id="wl-dur-h" class="form-control" inputmode="numeric" min="0" max="23" placeholder="HH" value="\${durH}">
                         <span class="wl-duration-label">h</span>
                     </div>
                     <span class="wl-duration-sep">:</span>
                     <div class="wl-duration-field">
-                        <input type="number" id="wl-dur-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="${durM}">
+                        <input type="number" id="wl-dur-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="\${durM}">
                         <span class="wl-duration-label">min</span>
                     </div>
                     <span class="wl-duration-sep">:</span>
                     <div class="wl-duration-field">
-                        <input type="number" id="wl-dur-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="${durS}">
+                        <input type="number" id="wl-dur-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="\${durS}">
                         <span class="wl-duration-label">seg</span>
                     </div>
                 </div>
@@ -423,51 +415,51 @@ const WorkoutLogView = {
             <div class="wl-metrics-grid">
                 <div class="form-group">
                     <label for="wl-calories">Calorías activas</label>
-                    <input type="number" id="wl-calories" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 153" value="${a.calories || ''}">
+                    <input type="number" id="wl-calories" class="form-control" inputmode="numeric" min="0" placeholder="Ej: 153" value="\${a.calories || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-hr">FC media (bpm)</label>
-                    <input type="number" id="wl-hr" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Ej: 119" value="${a.heart_rate_avg || ''}">
+                    <input type="number" id="wl-hr" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Ej: 119" value="\${a.heart_rate_avg || ''}">
                 </div>
             </div>
 
             <div class="wl-metrics-grid">
                 <div class="form-group">
                     <label for="wl-hr-max">FC máxima (bpm)</label>
-                    <input type="number" id="wl-hr-max" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Ej: 142" value="${a.heart_rate_max || ''}">
+                    <input type="number" id="wl-hr-max" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Ej: 142" value="\${a.heart_rate_max || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-distance">Distancia (km)</label>
-                    <input type="number" id="wl-distance" class="form-control" inputmode="decimal" step="0.01" min="0" placeholder="Opcional" value="${a.distance_km || ''}">
+                    <input type="number" id="wl-distance" class="form-control" inputmode="decimal" step="0.01" min="0" placeholder="Opcional" value="\${a.distance_km || ''}">
                 </div>
             </div>
 
             <div class="wl-metrics-grid">
                 <div class="form-group">
                     <label for="wl-speed-avg">Velocidad media (km/h)</label>
-                    <input type="number" id="wl-speed-avg" class="form-control" inputmode="decimal" step="0.1" min="0" placeholder="Opcional" value="${a.speed_avg || ''}">
+                    <input type="number" id="wl-speed-avg" class="form-control" inputmode="decimal" step="0.1" min="0" placeholder="Opcional" value="\${a.speed_avg || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-speed-max">Velocidad máx (km/h)</label>
-                    <input type="number" id="wl-speed-max" class="form-control" inputmode="decimal" step="0.1" min="0" placeholder="Opcional" value="${a.speed_max || ''}">
+                    <input type="number" id="wl-speed-max" class="form-control" inputmode="decimal" step="0.1" min="0" placeholder="Opcional" value="\${a.speed_max || ''}">
                 </div>
             </div>
 
             <div class="wl-metrics-grid">
                 <div class="form-group">
                     <label for="wl-cadence">Cadencia (rpm)</label>
-                    <input type="number" id="wl-cadence" class="form-control" inputmode="numeric" min="0" max="200" placeholder="Opcional" value="${a.cadence || ''}">
+                    <input type="number" id="wl-cadence" class="form-control" inputmode="numeric" min="0" max="200" placeholder="Opcional" value="\${a.cadence || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-power">Potencia (W)</label>
-                    <input type="number" id="wl-power" class="form-control" inputmode="numeric" min="0" placeholder="Opcional" value="${a.power || ''}">
+                    <input type="number" id="wl-power" class="form-control" inputmode="numeric" min="0" placeholder="Opcional" value="\${a.power || ''}">
                 </div>
             </div>
-        </div>`;
+        </div>\`;
     },
 
     renderStrengthCardioForm(session) {
-        const log = this.getExistingLogForSession(this.state.activeSessionIndex);
+        const log = this.state.existingLog;
         const a = log ? (log.actual || {}) : {};
 
         // Parse existing duration
@@ -481,27 +473,27 @@ const WorkoutLogView = {
         const titleIcon = session.type === 'strength_upper' ? '💪' : '🦵';
         const titleText = session.type === 'strength_upper' ? 'Fuerza tren superior' : 'Fuerza tren inferior';
 
-        return `
+        return \`
         <div class="card wl-form-card" id="wl-strength-cardio-form">
             <div class="card-header">
-                <span class="card-title">${titleIcon} Datos de ${titleText}</span>
+                <span class="card-title">\${titleIcon} Datos de \${titleText}</span>
             </div>
 
             <div class="form-group">
                 <label>Duración <span class="wl-required">*</span></label>
                 <div class="wl-duration-inputs">
                     <div class="wl-duration-field">
-                        <input type="number" id="wl-dur-h" class="form-control" inputmode="numeric" min="0" max="23" placeholder="HH" value="${durH}">
+                        <input type="number" id="wl-dur-h" class="form-control" inputmode="numeric" min="0" max="23" placeholder="HH" value="\${durH}">
                         <span class="wl-duration-label">h</span>
                     </div>
                     <span class="wl-duration-sep">:</span>
                     <div class="wl-duration-field">
-                        <input type="number" id="wl-dur-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="${durM}">
+                        <input type="number" id="wl-dur-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="\${durM}">
                         <span class="wl-duration-label">min</span>
                     </div>
                     <span class="wl-duration-sep">:</span>
                     <div class="wl-duration-field">
-                        <input type="number" id="wl-dur-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="${durS}">
+                        <input type="number" id="wl-dur-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="\${durS}">
                         <span class="wl-duration-label">seg</span>
                     </div>
                 </div>
@@ -510,28 +502,28 @@ const WorkoutLogView = {
             <div class="wl-metrics-grid">
                 <div class="form-group">
                     <label for="wl-calories">Calorías activas (kcal)</label>
-                    <input type="number" id="wl-calories" class="form-control" inputmode="numeric" min="0" placeholder="Opcional" value="${a.calories || ''}">
+                    <input type="number" id="wl-calories" class="form-control" inputmode="numeric" min="0" placeholder="Opcional" value="\${a.calories || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-hr">FC media (bpm)</label>
-                    <input type="number" id="wl-hr" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Opcional" value="${a.heart_rate_avg || ''}">
+                    <input type="number" id="wl-hr" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Opcional" value="\${a.heart_rate_avg || ''}">
                 </div>
             </div>
 
             <div class="wl-metrics-grid">
                 <div class="form-group">
                     <label for="wl-hr-max">FC máxima (bpm)</label>
-                    <input type="number" id="wl-hr-max" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Opcional" value="${a.heart_rate_max || ''}">
+                    <input type="number" id="wl-hr-max" class="form-control" inputmode="numeric" min="0" max="250" placeholder="Opcional" value="\${a.heart_rate_max || ''}">
                 </div>
                 <div class="form-group">
                     <label for="wl-zone-pct">% Zona entrenamiento</label>
-                    <input type="number" id="wl-zone-pct" class="form-control" inputmode="numeric" min="0" max="100" placeholder="Opcional" value="${a.zone_percentage || ''}">
+                    <input type="number" id="wl-zone-pct" class="form-control" inputmode="numeric" min="0" max="100" placeholder="Opcional" value="\${a.zone_percentage || ''}">
                 </div>
             </div>
-        </div>`;
+        </div>\`;
     },
     renderStrengthForm(session) {
-        const log = this.getExistingLogForSession(this.state.activeSessionIndex);
+        const log = this.state.existingLog;
         const logExercises = log && log.actual ? (log.actual.exercises || {}) : {};
         const allExercises = this.state.allExercises;
 
@@ -542,57 +534,57 @@ const WorkoutLogView = {
                 const group = allExercises[groupKey];
                 if (!group || !group.exercises) continue;
 
-                exercisesHtml += `<div class="wl-exercise-group-title">${group.name}</div>`;
+                exercisesHtml += \`<div class="wl-exercise-group-title">\${group.name}</div>\`;
 
                 for (const [exId, ex] of Object.entries(group.exercises)) {
                     const logEx = logExercises[exId] || {};
                     const isChecked = !!logEx.done;
 
-                    exercisesHtml += `
-                    <div class="wl-exercise-item" data-exercise-id="${exId}">
+                    exercisesHtml += \`
+                    <div class="wl-exercise-item" data-exercise-id="\${exId}">
                         <div class="wl-exercise-check-row">
                             <label class="wl-checkbox-label">
-                                <input type="checkbox" class="wl-exercise-check" data-ex-id="${exId}" ${isChecked ? 'checked' : ''}>
+                                <input type="checkbox" class="wl-exercise-check" data-ex-id="\${exId}" \${isChecked ? 'checked' : ''}>
                                 <span class="wl-checkbox-custom"></span>
-                                <span class="wl-exercise-name">${ex.name}</span>
+                                <span class="wl-exercise-name">\${ex.name}</span>
                             </label>
-                            <span class="text-xs text-muted">${ex.sets} x ${ex.reps}</span>
+                            <span class="text-xs text-muted">\${ex.sets} x \${ex.reps}</span>
                         </div>
-                        <div class="wl-exercise-fields ${isChecked ? 'open' : ''}" data-fields-for="${exId}">
+                        <div class="wl-exercise-fields \${isChecked ? 'open' : ''}" data-fields-for="\${exId}">
                             <div class="wl-exercise-inputs">
                                 <div class="form-group">
                                     <label>Peso (kg)</label>
-                                    <input type="number" class="form-control wl-ex-weight" data-ex-id="${exId}" inputmode="decimal" step="0.5" min="0" placeholder="kg" value="${logEx.weight || ''}">
+                                    <input type="number" class="form-control wl-ex-weight" data-ex-id="\${exId}" inputmode="decimal" step="0.5" min="0" placeholder="kg" value="\${logEx.weight || ''}">
                                 </div>
                                 <div class="form-group">
                                     <label>Series</label>
-                                    <input type="number" class="form-control wl-ex-sets" data-ex-id="${exId}" inputmode="numeric" min="0" max="20" placeholder="3" value="${logEx.sets || ''}">
+                                    <input type="number" class="form-control wl-ex-sets" data-ex-id="\${exId}" inputmode="numeric" min="0" max="20" placeholder="3" value="\${logEx.sets || ''}">
                                 </div>
                                 <div class="form-group">
                                     <label>Reps</label>
-                                    <input type="number" class="form-control wl-ex-reps" data-ex-id="${exId}" inputmode="numeric" min="0" max="100" placeholder="10" value="${logEx.reps || ''}">
+                                    <input type="number" class="form-control wl-ex-reps" data-ex-id="\${exId}" inputmode="numeric" min="0" max="100" placeholder="10" value="\${logEx.reps || ''}">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control wl-ex-notes" data-ex-id="${exId}" placeholder="Notas del ejercicio..." value="${logEx.notes || ''}">
+                                <input type="text" class="form-control wl-ex-notes" data-ex-id="\${exId}" placeholder="Notas del ejercicio..." value="\${logEx.notes || ''}">
                             </div>
                         </div>
-                    </div>`;
+                    </div>\`;
                 }
             }
         }
 
-        return `
+        return \`
         <div class="card wl-form-card" id="wl-strength-form">
             <div class="card-header">
                 <span class="card-title">Ejercicios realizados</span>
             </div>
-            ${exercisesHtml}
-        </div>`;
+            \${exercisesHtml}
+        </div>\`;
     },
 
     renderCommonFields() {
-        const log = this.getExistingLogForSession(this.state.activeSessionIndex);
+        const log = this.state.existingLog;
         const feeling = log ? (log.feeling || '') : '';
         const rpe = log ? (log.rpe || 5) : 5;
         const notes = log ? (log.notes || '') : '';
@@ -608,14 +600,14 @@ const WorkoutLogView = {
         let feelingHtml = '';
         for (const f of feelings) {
             const selected = feeling === f.value ? 'selected' : '';
-            feelingHtml += `
-                <button class="wl-feeling-btn ${selected}" data-feeling="${f.value}">
-                    <span class="wl-feeling-emoji">${f.emoji}</span>
-                    <span class="wl-feeling-label">${f.label}</span>
-                </button>`;
+            feelingHtml += \`
+                <button class="wl-feeling-btn \${selected}" data-feeling="\${f.value}">
+                    <span class="wl-feeling-emoji">\${f.emoji}</span>
+                    <span class="wl-feeling-label">\${f.label}</span>
+                </button>\`;
         }
 
-        return `
+        return \`
         <div class="card wl-form-card">
             <div class="card-header">
                 <span class="card-title">¿Cómo te has sentido?</span>
@@ -623,28 +615,28 @@ const WorkoutLogView = {
 
             <div class="form-group">
                 <div class="wl-feeling-row">
-                    ${feelingHtml}
+                    \${feelingHtml}
                 </div>
-                <input type="hidden" id="wl-feeling" value="${feeling}">
+                <input type="hidden" id="wl-feeling" value="\${feeling}">
             </div>
 
             <div class="form-group">
-                <label for="wl-rpe">RPE (Esfuerzo percibido): <strong id="wl-rpe-value">${rpe}</strong>/10</label>
+                <label for="wl-rpe">RPE (Esfuerzo percibido): <strong id="wl-rpe-value">\${rpe}</strong>/10</label>
                 <div class="wl-rpe-container">
                     <span class="wl-rpe-label-end">Fácil</span>
-                    <input type="range" id="wl-rpe" class="wl-rpe-slider" min="1" max="10" step="1" value="${rpe}">
+                    <input type="range" id="wl-rpe" class="wl-rpe-slider" min="1" max="10" step="1" value="\${rpe}">
                     <span class="wl-rpe-label-end">Máximo</span>
                 </div>
                 <div class="wl-rpe-marks">
-                    ${[1,2,3,4,5,6,7,8,9,10].map(n => `<span class="wl-rpe-mark">${n}</span>`).join('')}
+                    \${[1,2,3,4,5,6,7,8,9,10].map(n => \`<span class="wl-rpe-mark">\${n}</span>\`).join('')}
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="wl-notes">Notas</label>
-                <textarea id="wl-notes" class="form-control" rows="3" placeholder="¿Algo que destacar del entrenamiento?">${notes}</textarea>
+                <textarea id="wl-notes" class="form-control" rows="3" placeholder="¿Algo que destacar del entrenamiento?">\${notes}</textarea>
             </div>
-        </div>`;
+        </div>\`;
     },
 
     mount() {
@@ -705,10 +697,10 @@ const WorkoutLogView = {
                 const totalSec = h * 3600 + m * 60 + s;
 
                 if (dist > 0 && totalSec > 0) {
-                    const duration = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                    const duration = \`\${String(h).padStart(2, '0')}:\${String(m).padStart(2, '0')}:\${String(s).padStart(2, '0')}\`;
                     const pace = Utils.calculatePace(dist, duration);
                     if (pace) {
-                        document.getElementById('wl-pace-auto').textContent = `Calculado: ${pace} min/km`;
+                        document.getElementById('wl-pace-auto').textContent = \`Calculado: \${pace} min/km\`;
                         // Only auto-fill if pace field is empty or was auto-filled
                         if (!paceInput.dataset.manual) {
                             paceInput.value = pace;
@@ -744,7 +736,7 @@ const WorkoutLogView = {
         document.querySelectorAll('.wl-exercise-check').forEach(cb => {
             cb.addEventListener('change', (e) => {
                 const exId = e.target.dataset.exId;
-                const fields = document.querySelector(`[data-fields-for="${exId}"]`);
+                const fields = document.querySelector(\`[data-fields-for="\${exId}"]\`);
                 if (fields) {
                     fields.classList.toggle('open', e.target.checked);
                 }
@@ -898,7 +890,7 @@ const WorkoutLogView = {
             // Show result summary
             let fieldsHtml = '';
             for (const m of mappings) {
-                fieldsHtml += `<span class="wl-ocr-field-chip">${m.label}: <strong>${m.value}</strong></span>`;
+                fieldsHtml += \`<span class="wl-ocr-field-chip">\${m.label}: <strong>\${m.value}</strong></span>\`;
             }
             document.getElementById('wl-ocr-result-fields').innerHTML = fieldsHtml;
 
@@ -1030,7 +1022,6 @@ const WorkoutLogView = {
 
         const base = {
             date: s.selectedDate,
-            sessionIndex: s.activeSessionIndex,
             sessionId: session.id,
             weekId: s.dayData ? s.dayData.weekId : null,
             sessionType: session.type,
@@ -1045,7 +1036,7 @@ const WorkoutLogView = {
             const h = parseInt(document.getElementById('wl-dur-h').value) || 0;
             const m = parseInt(document.getElementById('wl-dur-m').value) || 0;
             const sec = parseInt(document.getElementById('wl-dur-s').value) || 0;
-            const duration = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+            const duration = \`\${String(h).padStart(2, '0')}:\${String(m).padStart(2, '0')}:\${String(sec).padStart(2, '0')}\`;
 
             base.actual = {
                 completed: true,
@@ -1078,10 +1069,10 @@ const WorkoutLogView = {
                 const exId = cb.dataset.exId;
                 exercises[exId] = {
                     done: true,
-                    weight: parseFloat(document.querySelector(`.wl-ex-weight[data-ex-id="${exId}"]`).value) || null,
-                    sets: parseInt(document.querySelector(`.wl-ex-sets[data-ex-id="${exId}"]`).value) || null,
-                    reps: parseInt(document.querySelector(`.wl-ex-reps[data-ex-id="${exId}"]`).value) || null,
-                    notes: document.querySelector(`.wl-ex-notes[data-ex-id="${exId}"]`).value || ''
+                    weight: parseFloat(document.querySelector(\`.wl-ex-weight[data-ex-id="\${exId}"]\`).value) || null,
+                    sets: parseInt(document.querySelector(\`.wl-ex-sets[data-ex-id="\${exId}"]\`).value) || null,
+                    reps: parseInt(document.querySelector(\`.wl-ex-reps[data-ex-id="\${exId}"]\`).value) || null,
+                    notes: document.querySelector(\`.wl-ex-notes[data-ex-id="\${exId}"]\`).value || ''
                 };
             });
 
@@ -1095,7 +1086,7 @@ const WorkoutLogView = {
             const h = parseInt(document.getElementById('wl-dur-h').value) || 0;
             const m = parseInt(document.getElementById('wl-dur-m').value) || 0;
             const sec = parseInt(document.getElementById('wl-dur-s').value) || 0;
-            const duration = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+            const duration = \`\${String(h).padStart(2, '0')}:\${String(m).padStart(2, '0')}:\${String(sec).padStart(2, '0')}\`;
 
             base.actual = {
                 completed: true,
@@ -1139,3 +1130,7 @@ const WorkoutLogView = {
 
 // Register with router
 Router.registerView('workout-log', WorkoutLogView);
+`;
+
+fs.writeFileSync('public/js/views/workout-log.js', content);
+console.log('workout-log.js actualizado');

@@ -10,7 +10,8 @@ const EditPlanView = {
         currentWeekNum: null,
         activeTab: 'plan', // 'plan' or 'exercises'
         exerciseGroup: 'tren_inferior',
-        dirty: false
+        dirty: false,
+        editingDate: null  // Specific date being edited, null = show all week
     },
 
     async render() {
@@ -24,6 +25,19 @@ const EditPlanView = {
         s.phases = phases || {};
         s.allExercises = allExercises || {};
         s.dirty = false;
+
+        // Check sessionStorage for editing params (set by weekly view)
+        const storedWeek = sessionStorage.getItem('editPlanWeek');
+        const storedDate = sessionStorage.getItem('editPlanDate');
+        if (storedWeek && !s.currentWeekNum) {
+            s.currentWeekNum = parseInt(storedWeek);
+        }
+        if (storedDate && !s.editingDate) {
+            s.editingDate = storedDate;
+        }
+        // Clear sessionStorage after reading
+        sessionStorage.removeItem('editPlanWeek');
+        sessionStorage.removeItem('editPlanDate');
 
         if (!s.currentWeekNum) {
             const cw = await DB.getCurrentWeek();
@@ -90,20 +104,38 @@ const EditPlanView = {
         const phaseColor = phase ? phase.color : '#a0a0b0';
         const phaseName = phase ? phase.name : '';
 
-        // Week selector
-        let html = `
-        <div class="week-selector">
-            <button class="week-selector-btn" id="epWeekPrev">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <div class="week-selector-info">
-                <span class="week-selector-label">Semana ${s.currentWeekNum}</span>
-                <span class="badge badge-phase" style="background-color: ${phaseColor}20; color: ${phaseColor};">${phaseName}</span>
-            </div>
-            <button class="week-selector-btn" id="epWeekNext">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-        </div>`;
+        // Header - show day info if editing specific date
+        let headerHtml = '';
+        if (s.editingDate) {
+            const editDate = Utils.parseDate(s.editingDate);
+            const dayName = Utils.getDayName(editDate);
+            const dayNum = editDate.getDate();
+            const monthName = Utils.getMonthName(editDate.getMonth());
+            headerHtml = `
+            <div class="ep-day-header-main">
+                <button class="btn btn-secondary btn-sm" id="ep-back-to-week">← Volver</button>
+                <div class="ep-editing-day">
+                    <span class="ep-editing-day-name">${dayName} ${dayNum} ${monthName}</span>
+                    <span class="badge badge-phase" style="background-color: ${phaseColor}20; color: ${phaseColor};">Semana ${s.currentWeekNum} · ${phaseName}</span>
+                </div>
+            </div>`;
+        } else {
+            headerHtml = `
+            <div class="week-selector">
+                <button class="week-selector-btn" id="epWeekPrev">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div class="week-selector-info">
+                    <span class="week-selector-label">Semana ${s.currentWeekNum}</span>
+                    <span class="badge badge-phase" style="background-color: ${phaseColor}20; color: ${phaseColor};">${phaseName}</span>
+                </div>
+                <button class="week-selector-btn" id="epWeekNext">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </div>`;
+        }
+
+        let html = headerHtml;
 
         if (!week || !week.days) {
             html += '<div class="empty-state"><div class="empty-state-icon">📅</div><p class="empty-state-text">No hay datos para esta semana.</p></div>';
@@ -112,7 +144,10 @@ const EditPlanView = {
 
         const sortedDates = Object.keys(week.days).sort();
 
-        for (const dateStr of sortedDates) {
+        // If editing specific date, filter to only that date
+        const datesToShow = s.editingDate ? sortedDates.filter(d => d === s.editingDate) : sortedDates;
+
+        for (const dateStr of datesToShow) {
             const day = week.days[dateStr];
             const dateObj = Utils.parseDate(dateStr);
             const dayName = Utils.getDayName(dateObj);
@@ -163,6 +198,8 @@ const EditPlanView = {
         const isRunning = session.type === 'running';
         const isCycling = session.type === 'cycling';
         const isStrength = session.type === 'strength';
+        const isStrengthUpper = session.type === 'strength_upper';
+        const isStrengthLower = session.type === 'strength_lower';
 
         // Exercise group selector for strength
         const exerciseGroups = ['tren_inferior', 'tren_superior', 'pliometria'];
@@ -179,9 +216,9 @@ const EditPlanView = {
             groupSelectHtml += '</div></div>';
         }
 
-        // Running details
+        // Details for running, cycling, and strength cardio types
         let detailsHtml = '';
-        if (isRunning || isCycling) {
+        if (isRunning || isCycling || isStrengthUpper || isStrengthLower) {
             const d = session.details || {};
             detailsHtml = `
             <div class="ep-session-details">
@@ -214,6 +251,8 @@ const EditPlanView = {
                         <option value="running" ${session.type === 'running' ? 'selected' : ''}>🏃 Carrera</option>
                         <option value="cycling" ${session.type === 'cycling' ? 'selected' : ''}>🚴 Ciclismo</option>
                         <option value="strength" ${session.type === 'strength' ? 'selected' : ''}>💪 Fuerza</option>
+                        <option value="strength_upper" ${session.type === 'strength_upper' ? 'selected' : ''}>💪 Fuerza tren superior</option>
+                        <option value="strength_lower" ${session.type === 'strength_lower' ? 'selected' : ''}>🦵 Fuerza tren inferior</option>
                         <option value="rest" ${session.type === 'rest' ? 'selected' : ''}>🧘 Descanso activo</option>
                         <option value="mobility" ${session.type === 'mobility' ? 'selected' : ''}>🔄 Movilidad</option>
                     </select>
@@ -351,11 +390,58 @@ const EditPlanView = {
     // ========== PLAN EDITOR EVENTS ==========
 
     mountPlanEditor() {
+        // Back to week button (when editing single day)
+        const backBtn = document.getElementById('ep-back-to-week');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                this.state.editingDate = null;
+                const container = document.getElementById('main-content').querySelector('.view-container');
+                container.innerHTML = this.renderPage();
+                this.mount();
+            });
+        }
+
         // Week navigation
         const prevBtn = document.getElementById('epWeekPrev');
         const nextBtn = document.getElementById('epWeekNext');
         if (prevBtn) prevBtn.addEventListener('click', () => this.changeWeek(-1));
         if (nextBtn) nextBtn.addEventListener('click', () => this.changeWeek(1));
+
+        // Session type change - update fields dynamically
+        document.querySelectorAll('.ep-ses-type').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const sessionEl = e.currentTarget.closest('.ep-session');
+                const dateStr = sessionEl.dataset.date;
+                const index = parseInt(sessionEl.dataset.index);
+                const weekId = sessionEl.closest('.ep-day-card').dataset.week;
+
+                // Collect current values
+                const session = {
+                    id: `ses_${dateStr.replace(/-/g, '')}_${index}`,
+                    type: e.currentTarget.value,
+                    title: sessionEl.querySelector('.ep-ses-title')?.value || '',
+                    duration: sessionEl.querySelector('.ep-ses-duration')?.value || '',
+                    description: sessionEl.querySelector('.ep-ses-description')?.value || '',
+                    notes: sessionEl.querySelector('.ep-ses-notes')?.value || '',
+                    details: {
+                        warmup: sessionEl.querySelector('.ep-ses-warmup')?.value || '',
+                        main: sessionEl.querySelector('.ep-ses-main')?.value || '',
+                        cooldown: sessionEl.querySelector('.ep-ses-cooldown')?.value || ''
+                    },
+                    exerciseGroup: Array.from(sessionEl.querySelectorAll('.ep-ex-group-check:checked')).map(cb => cb.value)
+                };
+
+                // Re-render session
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = this.renderSessionEditor(weekId, dateStr, session, index);
+                const newEl = tempDiv.firstElementChild;
+                sessionEl.replaceWith(newEl);
+
+                // Re-bind events for the new element
+                this.bindSessionEvents(newEl);
+                this.state.dirty = true;
+            });
+        });
 
         // Delete session
         document.querySelectorAll('.ep-session-delete').forEach(btn => {
@@ -393,11 +479,8 @@ const EditPlanView = {
                 const newEl = tempDiv.firstElementChild;
                 sessionsContainer.appendChild(newEl);
 
-                // Bind delete for new element
-                newEl.querySelector('.ep-session-delete').addEventListener('click', (ev) => {
-                    ev.preventDefault();
-                    if (confirm('¿Eliminar esta sesión?')) newEl.remove();
-                });
+                // Bind all events for new element
+                this.bindSessionEvents(newEl);
 
                 this.state.dirty = true;
                 newEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -407,6 +490,53 @@ const EditPlanView = {
         // Save plan
         const saveBtn = document.getElementById('ep-save-plan');
         if (saveBtn) saveBtn.addEventListener('click', () => this.handleSavePlan());
+    },
+
+    bindSessionEvents(sessionEl) {
+        // Delete button
+        const deleteBtn = sessionEl.querySelector('.ep-session-delete');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (confirm('¿Eliminar esta sesión?')) {
+                    sessionEl.remove();
+                    this.state.dirty = true;
+                }
+            });
+        }
+
+        // Type change
+        const typeSelect = sessionEl.querySelector('.ep-ses-type');
+        if (typeSelect) {
+            typeSelect.addEventListener('change', (e) => {
+                const dateStr = sessionEl.dataset.date;
+                const index = parseInt(sessionEl.dataset.index);
+                const weekId = sessionEl.closest('.ep-day-card').dataset.week;
+
+                const session = {
+                    id: `ses_${dateStr.replace(/-/g, '')}_${index}`,
+                    type: e.currentTarget.value,
+                    title: sessionEl.querySelector('.ep-ses-title')?.value || '',
+                    duration: sessionEl.querySelector('.ep-ses-duration')?.value || '',
+                    description: sessionEl.querySelector('.ep-ses-description')?.value || '',
+                    notes: sessionEl.querySelector('.ep-ses-notes')?.value || '',
+                    details: {
+                        warmup: sessionEl.querySelector('.ep-ses-warmup')?.value || '',
+                        main: sessionEl.querySelector('.ep-ses-main')?.value || '',
+                        cooldown: sessionEl.querySelector('.ep-ses-cooldown')?.value || ''
+                    },
+                    exerciseGroup: Array.from(sessionEl.querySelectorAll('.ep-ex-group-check:checked')).map(cb => cb.value)
+                };
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = this.renderSessionEditor(weekId, dateStr, session, index);
+                const newEl = tempDiv.firstElementChild;
+                sessionEl.replaceWith(newEl);
+
+                this.bindSessionEvents(newEl);
+                this.state.dirty = true;
+            });
+        }
     },
 
     changeWeek(dir) {
@@ -440,6 +570,10 @@ const EditPlanView = {
                 const sessionEls = card.querySelectorAll('.ep-session');
                 const sessions = [];
 
+                // Get existing sessions to preserve completed status
+                const existingSessionsSnap = await db.ref(`plan/weeks/${weekId}/days/${dateStr}/sessions`).once('value');
+                const existingSessions = existingSessionsSnap.val() || [];
+
                 sessionEls.forEach((sesEl, idx) => {
                     const dStr = sesEl.dataset.date;
                     const type = card.querySelector(`.ep-ses-type[data-date="${dStr}"][data-idx="${sesEl.dataset.index}"]`)?.value
@@ -449,16 +583,21 @@ const EditPlanView = {
                     const description = sesEl.querySelector('.ep-ses-description')?.value || '';
                     const notes = sesEl.querySelector('.ep-ses-notes')?.value || '';
 
+                    // Preserve completed status from existing session
+                    const existingSession = existingSessions.find(s => s && s.id === `ses_${dateStr.replace(/-/g, '')}_${idx}`);
+                    const completed = existingSession?.completed || false;
+
                     const session = {
                         id: `ses_${dateStr.replace(/-/g, '')}_${idx}`,
                         type,
                         title: title.trim(),
                         duration: duration.trim(),
                         description: description.trim(),
-                        notes: notes.trim()
+                        notes: notes.trim(),
+                        completed
                     };
 
-                    if (type === 'running') {
+                    if (type === 'running' || type === 'cycling' || type === 'strength_upper' || type === 'strength_lower') {
                         session.details = {
                             warmup: sesEl.querySelector('.ep-ses-warmup')?.value?.trim() || '',
                             main: sesEl.querySelector('.ep-ses-main')?.value?.trim() || '',
@@ -480,7 +619,7 @@ const EditPlanView = {
                 if (workSchedule) dayData.workSchedule = workSchedule;
                 if (bestMoment) dayData.bestMoment = bestMoment;
 
-                await db.ref(dayPath).set(dayData);
+                await db.ref(dayPath).update(dayData);
             }
 
             // Invalidate caches

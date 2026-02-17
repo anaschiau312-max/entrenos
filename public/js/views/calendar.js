@@ -243,7 +243,8 @@ const CalendarView = {
         for (const session of sessions) {
             const isRunning = session.type === 'running';
             const isCycling = session.type === 'cycling';
-            const icon = isRunning ? '🏃' : '💪';
+            const isStrengthLower = session.type === 'strength_lower';
+            const icon = isRunning ? '🏃' : isCycling ? '🚴' : isStrengthLower ? '🦵' : '💪';
             const isCompleted = session.completed;
 
             html += `

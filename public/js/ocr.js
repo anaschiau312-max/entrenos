@@ -184,8 +184,11 @@ const OCR = {
         }
 
         if (data.vertical_oscillation_cm != null) {
-            // Map to VO2max field if no specific field — or just store in notes
-            // For now we skip this as there's no direct field
+            // Vertical oscillation — could add to notes or a future field
+        }
+
+        if (data.vo2_max != null) {
+            mappings.push({ fieldId: 'wl-vo2max', value: data.vo2_max, label: 'VO2 Max' });
         }
 
         return mappings;

@@ -1,4 +1,4 @@
-/* ===== RunTracker PWA — Global Styles ===== */
+﻿/* ===== RunTracker PWA — Global Styles ===== */
 
 /* --- CSS Variables --- */
 :root {
@@ -2084,6 +2084,504 @@ textarea.form-control {
     line-height: 1.4;
 }
 
+
+/* === Warmup Selection Grid === */
+
+.wu-selection-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.wu-selection-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.wu-selection-card:hover,
+.wu-selection-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.wu-selection-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: rgba(233, 69, 96, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.wu-selection-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.wu-selection-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.wu-selection-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.wu-selection-duration {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    padding: 4px 10px;
+    background-color: rgba(233, 69, 96, 0.1);
+    border-radius: 12px;
+}
+
+.wu-selection-arrow {
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+/* === Warmup Routine View === */
+
+.wu-routine-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.wu-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: none;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.wu-back-btn:hover,
+.wu-back-btn:active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.wu-routine-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.wu-routine-icon {
+    font-size: 24px;
+}
+
+.wu-routine-title {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.wu-routine-duration {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 6px 12px;
+    background-color: rgba(233, 69, 96, 0.1);
+    border-radius: 16px;
+    white-space: nowrap;
+}
+
+/* === Warmup Exercise List === */
+
+.wu-exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.wu-exercise-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 16px;
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-card);
+}
+
+.wu-exercise-order {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.wu-exercise-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.wu-exercise-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.wu-exercise-reps {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.wu-exercise-tips {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+/* === Optional exercise styles === */
+
+.wu-exercise-optional {
+    opacity: 0.75;
+    border-left: 3px solid var(--warning);
+}
+
+.wu-optional-badge {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: rgba(255, 152, 0, 0.2);
+    color: var(--warning);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+/* === Express exercise styles === */
+
+.wu-exercise-express {
+    border-left: 3px solid var(--info);
+}
+
+.wu-express-badge {
+    font-size: 12px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.wu-express-legend {
+    padding: 8px 12px;
+    background-color: rgba(33, 150, 243, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid var(--info);
+}
+
+/* === Technique and Breathing Section === */
+
+.tech-intro {
+    margin-bottom: 20px;
+}
+
+.tech-intro-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.tech-section {
+    margin-bottom: 24px;
+}
+
+.tech-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+}
+
+.tech-section-icon {
+    font-size: 24px;
+}
+
+.tech-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.tech-tips-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tech-tip-card {
+    cursor: pointer;
+    transition: all var(--transition);
+    overflow: hidden;
+}
+
+.tech-tip-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.tech-tip-header {
+    position: relative;
+    padding-right: 32px;
+}
+
+.tech-tip-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.tech-tip-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.tech-priority-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 152, 0, 0.2));
+    color: #FFD54F;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.tech-tip-summary {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.tech-tip-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tech-tip-chevron {
+    color: var(--text-secondary);
+    transition: transform 0.25s ease;
+}
+
+.tech-tip-card.expanded .tech-tip-chevron {
+    transform: rotate(180deg);
+}
+
+.tech-tip-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.tech-tip-card.expanded .tech-tip-details {
+    max-height: 500px;
+    padding-top: 14px;
+    margin-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tech-tip-details-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tech-tip-details-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+
+.tech-tip-details-list li:last-child {
+    margin-bottom: 0;
+}
+
+.tech-tip-details-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+/* === Strength Routine Styles === */
+
+.str-routine-header {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.str-routine-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.str-routine-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.str-routine-duration,
+.str-routine-frequency {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.str-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.str-block {
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.str-block-header {
+    padding: 12px 16px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-left: 4px solid var(--block-color, var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.str-block-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--block-color, var(--accent));
+}
+
+.str-block-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.str-block-exercises {
+    padding: 8px 0;
+}
+
+.str-exercise-item {
+    display: flex;
+    gap: 14px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.str-exercise-item:last-child {
+    border-bottom: none;
+}
+
+.str-exercise-order {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.str-exercise-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.str-exercise-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.str-exercise-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.str-exercise-sets {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.str-sets-detail {
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.str-exercise-rest {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.str-exercise-tips {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+
+
+
+
+
+
 /* ===== Stats View ===== */
 
 .st-header {
@@ -2119,6 +2617,38 @@ textarea.form-control {
 
 .st-period-btn.active {
     background-color: var(--accent);
+    color: #fff;
+}
+/* Type selector */
+.st-type-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    padding: 0 4px;
+}
+
+.st-type-btn {
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+}
+
+.st-type-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.st-type-btn.active {
+    background-color: var(--accent);
+    border-color: var(--accent);
     color: #fff;
 }
 
@@ -2234,6 +2764,373 @@ textarea.form-control {
 .st-td-date {
     font-weight: 600;
     color: var(--text-primary);
+}
+
+.st-td-actions {
+    width: 40px;
+    text-align: center;
+}
+
+.st-delete-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.st-delete-btn:hover {
+    color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
+}
+
+.st-delete-btn:active {
+    transform: scale(0.95);
+}
+
+/* Delete Modal */
+.st-delete-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.st-delete-modal-content {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.st-delete-modal-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.st-delete-modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.st-delete-modal-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.st-delete-modal-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.st-delete-modal-buttons .btn {
+    flex: 1;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    color: #fff;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #e53935, #c62828);
+}
+
+.btn-danger:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+/* Countdown Banner */
+.st-countdown-banner {
+    background: linear-gradient(135deg, var(--accent) 0%, #ff6b8a 100%);
+    border-radius: var(--border-radius);
+    padding: 20px 16px;
+    margin-bottom: 12px;
+}
+
+.st-countdown-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.st-countdown-icon {
+    font-size: 48px;
+}
+
+.st-countdown-content {
+    text-align: left;
+}
+
+.st-countdown-days {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1;
+    color: #fff;
+}
+
+.st-countdown-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 2px;
+}
+
+.st-countdown-date {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.st-countdown-progress {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.st-countdown-progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.st-countdown-progress-fill {
+    height: 100%;
+    background: #fff;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.st-countdown-progress-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+}
+
+/* Quick Stats Row */
+.st-quick-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.st-quick-stat {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 12px 8px;
+    text-align: center;
+}
+
+.st-quick-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.st-quick-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 2px;
+}
+
+/* Progress Panel */
+.st-progress-panel {
+    margin-bottom: 12px;
+}
+
+.st-progress-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 4px 0;
+}
+
+.st-progress-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+}
+
+.st-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    grid-column: 1 / -1;
+}
+
+.st-progress-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.st-progress-values {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.st-progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.st-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.st-progress-pct {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 36px;
+    text-align: right;
+}
+
+/* Best Metrics */
+.st-best-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.st-best-metric {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+}
+
+.st-best-icon {
+    font-size: 24px;
+}
+
+.st-best-content {
+    flex: 1;
+}
+
+.st-best-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.st-best-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* Remaining Sessions Widget */
+.st-remaining-widget {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.st-remaining-item {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 12px 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.st-remaining-icon {
+    font-size: 18px;
+}
+
+.st-remaining-count {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.st-remaining-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Section Headers */
+.st-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 12px;
+}
+
+.st-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Filter Group */
+.st-filter-group {
+    display: flex;
+    gap: 4px;
+}
+
+.st-filter-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--border-radius-btn);
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.st-filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
 }
 
 /* ===== Edit Plan View ===== */
@@ -2721,4 +3618,172 @@ textarea.form-control {
 
 .cal-dot-cycling {
     background-color: #22c55e;
+}
+
+
+/* Week detail header */
+.week-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.week-detail-header strong {
+    color: var(--text-primary);
+    font-size: 13px;
+}
+
+.week-detail-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.week-day-notes {
+    background-color: rgba(233, 69, 96, 0.08);
+    border-left: 2px solid var(--accent);
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 0 6px 6px 0;
+    color: var(--text-secondary);
+}
+
+/* Week success indicators */
+.week-success-card {
+    background-color: rgba(76, 175, 80, 0.08);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    margin-bottom: 12px;
+}
+
+.week-success-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4caf50;
+    margin-bottom: 10px;
+}
+
+.week-success-list {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.week-success-list li {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.week-success-list li:last-child {
+    margin-bottom: 0;
+}
+
+.week-volume-target {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    padding: 6px 10px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* Speed reference table */
+.speed-table-wrapper {
+    overflow-x: auto;
+}
+
+.speed-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.speed-table th,
+.speed-table td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.speed-table th {
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 10px;
+}
+
+.speed-table td {
+    color: var(--text-primary);
+}
+
+.speed-table td:first-child {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.speed-table td:last-child {
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.speed-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Alert signals */
+.set-alerts {
+    background-color: rgba(255, 152, 0, 0.08);
+    border: 1px solid rgba(255, 152, 0, 0.2);
+}
+
+.alert-list {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.alert-list li {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.alert-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* Workout log optional tag */
+.wl-optional-tag {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 4px;
+}
+
+.wl-required {
+    color: var(--accent);
+    font-weight: 400;
+}
+
+.wl-ocr-body {
+    padding: 0 16px 16px 16px;
+}
+
+.wl-ocr-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+}
+
+.wl-ocr-header .expand-icon {
+    transition: transform 0.2s;
+}
+
+.wl-ocr-header.expanded .expand-icon {
+    transform: rotate(180deg);
 }

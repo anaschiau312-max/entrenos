@@ -1,4 +1,6 @@
-// Weekly Plan View
+const fs = require('fs');
+
+const content = `// Weekly Plan View
 
 const WeeklyView = {
     currentWeekNum: null,
@@ -28,15 +30,15 @@ const WeeklyView = {
     },
 
     renderWeek() {
-        const weekId = `week_${String(this.currentWeekNum).padStart(2, '0')}`;
+        const weekId = \`week_\${String(this.currentWeekNum).padStart(2, '0')}\`;
         const week = this.plan && this.plan.weeks ? this.plan.weeks[weekId] : null;
 
         if (!week) {
-            return `
+            return \`
                 <div class="empty-state">
                     <div class="empty-state-icon">📅</div>
                     <p class="empty-state-text">No hay datos para esta semana</p>
-                </div>`;
+                </div>\`;
         }
 
         const phaseKey = week.phase;
@@ -69,7 +71,7 @@ const WeeklyView = {
             completedSessions += sessions.filter(s => s.completed).length;
 
             // Check for logged km
-            const logId = `log_${dateStr.replace(/-/g, '')}`;
+            const logId = \`log_\${dateStr.replace(/-/g, '')}\`;
             const log = this.logs[logId];
             if (log && log.actual && log.actual.distance_km) {
                 totalKm += log.actual.distance_km;
@@ -80,11 +82,11 @@ const WeeklyView = {
             let statusHtml = '';
 
             if (isRest) {
-                sessionHtml = `
+                sessionHtml = \`
                     <div class="week-day-session week-day-rest">
                         <span class="week-day-session-icon">➖</span>
                         <span class="text-muted text-sm">Descanso</span>
-                    </div>`;
+                    </div>\`;
                 statusHtml = '<span class="status-dot rest"></span>';
             } else {
                 for (const session of sessions) {
@@ -96,19 +98,19 @@ const WeeklyView = {
                     const isCompleted = session.completed;
                     const isPast = dateStr < today && !isCompleted;
 
-                    sessionHtml += `
+                    sessionHtml += \`
                         <div class="week-day-session">
-                            <span class="week-day-session-icon">${icon}</span>
+                            <span class="week-day-session-icon">\${icon}</span>
                             <div class="week-day-session-info">
-                                <span class="week-day-session-title">${session.title}</span>
-                                <span class="text-muted text-xs">${session.duration}'</span>
+                                <span class="week-day-session-title">\${session.title}</span>
+                                <span class="text-muted text-xs">\${session.duration}'</span>
                             </div>
-                            ${isCompleted
+                            \${isCompleted
                                 ? '<span class="text-success text-sm fw-bold">✓</span>'
                                 : isPast
                                     ? '<span class="text-danger text-sm">✗</span>'
-                                    : '<span class="text-warning text-sm">⏳</span>'}`
-                        + `</div>`;
+                                    : '<span class="text-warning text-sm">⏳</span>'}\`
+                        + \`</div>\`;
                 }
 
                 const allCompleted = sessions.every(s => s.completed);
@@ -133,105 +135,105 @@ const WeeklyView = {
                                   session.type === 'strength_upper' ? '💪' :
                                   session.type === 'strength' ? '💪' : '🧘';
 
-                    detailsHtml += `
+                    detailsHtml += \`
                         <div class="week-day-details">
                             <div class="week-detail-header">
-                                <span>${sIcon}</span>
-                                <strong>${session.title}</strong>
-                                <span class="text-muted">${session.duration}'</span>
+                                <span>\${sIcon}</span>
+                                <strong>\${session.title}</strong>
+                                <span class="text-muted">\${session.duration}'</span>
                             </div>
-                            <p class="week-detail-desc">${session.description}</p>
-                        </div>`;
+                            <p class="week-detail-desc">\${session.description}</p>
+                        </div>\`;
                 }
             }
 
             // Day notes
-            const dayNotesHtml = day.notes ? `
+            const dayNotesHtml = day.notes ? \`
                 <div class="week-day-notes">
-                    <span class="text-xs">📝 ${day.notes}</span>
-                </div>` : '';
+                    <span class="text-xs">📝 \${day.notes}</span>
+                </div>\` : '';
 
             // Schedule info (legacy support)
-            const scheduleHtml = (day.workSchedule || day.bestMoment) ? `
+            const scheduleHtml = (day.workSchedule || day.bestMoment) ? \`
                 <div class="week-day-schedule">
-                    ${day.workSchedule ? `<span class="chip">🕐 ${day.workSchedule}</span>` : ''}
-                    ${day.bestMoment && day.bestMoment !== 'Descanso' ? `<span class="chip">⚡ ${day.bestMoment}</span>` : ''}
-                </div>` : '';
+                    \${day.workSchedule ? \`<span class="chip">🕐 \${day.workSchedule}</span>\` : ''}
+                    \${day.bestMoment && day.bestMoment !== 'Descanso' ? \`<span class="chip">⚡ \${day.bestMoment}</span>\` : ''}
+                </div>\` : '';
 
-            dayCardsHtml += `
-            <div class="card week-day-card ${isToday ? 'week-day-today' : ''}" data-expandable>
+            dayCardsHtml += \`
+            <div class="card week-day-card \${isToday ? 'week-day-today' : ''}" data-expandable>
                 <div class="expandable-header" data-toggle="week-expand">
                     <div class="week-day-header">
-                        ${statusHtml}
+                        \${statusHtml}
                         <div class="week-day-date">
-                            <span class="week-day-name">${dayName}</span>
-                            <span class="week-day-num">${dayNum} ${monthShort}</span>
+                            <span class="week-day-name">\${dayName}</span>
+                            <span class="week-day-num">\${dayNum} \${monthShort}</span>
                         </div>
                     </div>
                     <div class="week-day-content">
-                        ${sessionHtml}
+                        \${sessionHtml}
                     </div>
                     <span class="expand-icon">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                     </span>
                 </div>
                 <div class="expandable-body">
-                    ${scheduleHtml}
-                    ${dayNotesHtml}
-                    ${detailsHtml}
-                    <button class="btn btn-secondary btn-sm week-edit-day-btn" data-week="${this.currentWeekNum}" data-date="${dateStr}">
+                    \${scheduleHtml}
+                    \${dayNotesHtml}
+                    \${detailsHtml}
+                    <button class="btn btn-secondary btn-sm week-edit-day-btn" data-week="\${this.currentWeekNum}" data-date="\${dateStr}">
                         ✏️ Editar día
                     </button>
                 </div>
-            </div>`;
+            </div>\`;
         }
 
         // Success indicators
         let successHtml = '';
         if (week.successIndicators && week.successIndicators.length > 0) {
-            const indicatorItems = week.successIndicators.map(ind => `<li>${ind}</li>`).join('');
-            successHtml = `
+            const indicatorItems = week.successIndicators.map(ind => \`<li>\${ind}</li>\`).join('');
+            successHtml = \`
                 <div class="card week-success-card">
                     <div class="week-success-title">✅ Indicadores de éxito</div>
-                    <ul class="week-success-list">${indicatorItems}</ul>
-                </div>`;
+                    <ul class="week-success-list">\${indicatorItems}</ul>
+                </div>\`;
         }
 
         // Summary
         const completionPct = totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0;
-        const volumeInfo = week.volumeTarget ? `<div class="week-volume-target">${week.volumeTarget}</div>` : '';
+        const volumeInfo = week.volumeTarget ? \`<div class="week-volume-target">\${week.volumeTarget}</div>\` : '';
 
-        const summaryHtml = `
+        const summaryHtml = \`
             <div class="card week-summary">
                 <div class="week-summary-title">Resumen de la semana</div>
-                ${volumeInfo}
+                \${volumeInfo}
                 <div class="week-summary-stats">
                     <div class="week-summary-stat">
-                        <span class="week-summary-stat-value">${completedSessions}/${totalSessions}</span>
+                        <span class="week-summary-stat-value">\${completedSessions}/\${totalSessions}</span>
                         <span class="week-summary-stat-label">sesiones</span>
                     </div>
                     <div class="week-summary-stat">
-                        <span class="week-summary-stat-value">${completionPct}%</span>
+                        <span class="week-summary-stat-value">\${completionPct}%</span>
                         <span class="week-summary-stat-label">completado</span>
                     </div>
                     <div class="week-summary-stat">
-                        <span class="week-summary-stat-value">${totalKm > 0 ? totalKm.toFixed(1) : '—'}</span>
+                        <span class="week-summary-stat-value">\${totalKm > 0 ? totalKm.toFixed(1) : '—'}</span>
                         <span class="week-summary-stat-label">km</span>
                     </div>
                 </div>
                 <div class="progress-bar mt-8">
-                    <div class="progress-fill" style="width: ${completionPct}%"></div>
+                    <div class="progress-fill" style="width: \${completionPct}%"></div>
                 </div>
-            </div>`;
+            </div>\`;
 
-        return `
+        return \`
             <div class="week-selector">
                 <button class="week-selector-btn" id="weekPrev" aria-label="Semana anterior">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
                 <div class="week-selector-info">
-                    <span class="week-selector-label">Semana ${this.currentWeekNum}</span>
-                    <span class="badge badge-phase" style="background-color: ${phaseColor}20; color: ${phaseColor};">${phaseName}</span>
+                    <span class="week-selector-label">Semana \${this.currentWeekNum}</span>
+                    <span class="badge badge-phase" style="background-color: \${phaseColor}20; color: \${phaseColor};">\${phaseName}</span>
                 </div>
                 <button class="week-selector-btn" id="weekNext" aria-label="Semana siguiente">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -239,12 +241,12 @@ const WeeklyView = {
             </div>
 
             <div class="week-days" id="weekDays">
-                ${dayCardsHtml}
+                \${dayCardsHtml}
             </div>
 
-            ${successHtml}
-            ${summaryHtml}
-        `;
+            \${successHtml}
+            \${summaryHtml}
+        \`;
     },
 
     mount() {
@@ -309,7 +311,7 @@ const WeeklyView = {
 
         setTimeout(() => {
             const html = this.renderWeek();
-            container.innerHTML = `<div class="view-container">${html}</div>`;
+            container.innerHTML = \`<div class="view-container">\${html}</div>\`;
             this.mount();
         }, 150);
     }
@@ -317,3 +319,7 @@ const WeeklyView = {
 
 // Register with router
 Router.registerView('weekly', WeeklyView);
+`;
+
+fs.writeFileSync('public/js/views/weekly.js', content);
+console.log('weekly.js actualizado');

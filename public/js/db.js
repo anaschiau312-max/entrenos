@@ -93,7 +93,9 @@ const DB = {
     // ===== WORKOUT LOGS =====
 
     async saveWorkoutLog(uid, logData) {
-        const logId = `log_${logData.date.replace(/-/g, '')}`;
+        // Include session index in logId for multiple sessions per day
+        const sessionIdx = logData.sessionIndex !== undefined ? `_s${logData.sessionIndex}` : '';
+        const logId = `log_${logData.date.replace(/-/g, '')}${sessionIdx}`;
         const path = `workoutLogs/${uid}/${logId}`;
         const data = {
             ...logData,

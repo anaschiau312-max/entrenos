@@ -159,9 +159,11 @@ const DashboardView = {
         const isRunning = session.type === 'running';
         const isCycling = session.type === 'cycling';
         const isStrength = session.type === 'strength';
-        const icon = isRunning ? '🏃' : isCycling ? '🚴' : isStrength ? '💪' : '🧘';
-        const badgeClass = isRunning ? 'badge-running' : isCycling ? 'badge-cycling' : isStrength ? 'badge-strength' : 'badge-rest';
-        const typeLabel = isRunning ? 'Carrera' : isCycling ? 'Ciclismo' : isStrength ? 'Fuerza' : 'Otro';
+        const isStrengthUpper = session.type === 'strength_upper';
+        const isStrengthLower = session.type === 'strength_lower';
+        const icon = isRunning ? '🏃' : isCycling ? '🚴' : isStrengthUpper ? '💪' : isStrengthLower ? '🦵' : isStrength ? '💪' : '🧘';
+        const badgeClass = isRunning ? 'badge-running' : isCycling ? 'badge-cycling' : (isStrength || isStrengthUpper || isStrengthLower) ? 'badge-strength' : 'badge-rest';
+        const typeLabel = isRunning ? 'Carrera' : isCycling ? 'Ciclismo' : isStrengthUpper ? 'Fuerza superior' : isStrengthLower ? 'Fuerza inferior' : isStrength ? 'Fuerza' : 'Otro';
         const isCompleted = session.completed || (todayLog && todayLog.actual && todayLog.actual.completed);
 
         // Build expandable details

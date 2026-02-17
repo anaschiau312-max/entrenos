@@ -1,4 +1,6 @@
-// Settings View — Profile, race goal, data export, app settings
+const fs = require('fs');
+
+const content = `// Settings View — Profile, race goal, data export, app settings
 
 const SettingsView = {
 
@@ -35,7 +37,7 @@ const SettingsView = {
         const raceDate = p.raceDate || '2026-05-17';
         const raceTime = p.raceGoalTime || '';
         const daysLeft = this.calcDaysLeft(raceDate);
-        const daysLeftText = daysLeft > 0 ? `Faltan <strong>${daysLeft} días</strong> para la carrera` : daysLeft === 0 ? '<strong>¡Hoy es el día!</strong>' : 'La carrera ya pasó';
+        const daysLeftText = daysLeft > 0 ? \`Faltan <strong>\${daysLeft} días</strong> para la carrera\` : daysLeft === 0 ? '<strong>¡Hoy es el día!</strong>' : 'La carrera ya pasó';
 
         // Parse goal time
         let goalH = '', goalM = '', goalS = '';
@@ -51,24 +53,24 @@ const SettingsView = {
 
         // Pending sync
         const pendingOps = Offline.getQueue().length;
-        const pendingText = pendingOps > 0 ? `${pendingOps} operación${pendingOps > 1 ? 'es' : ''} pendiente${pendingOps > 1 ? 's' : ''}` : 'Todo sincronizado';
+        const pendingText = pendingOps > 0 ? \`\${pendingOps} operación\${pendingOps > 1 ? 'es' : ''} pendiente\${pendingOps > 1 ? 's' : ''}\` : 'Todo sincronizado';
 
         // Speed reference table
         let speedTableHtml = '';
         if (this.state.speedReference && this.state.speedReference.speeds) {
-            const rows = this.state.speedReference.speeds.map(s => `
+            const rows = this.state.speedReference.speeds.map(s => \`
                 <tr>
-                    <td>${s.speed} km/h</td>
-                    <td>${s.pace} min/km</td>
-                    <td>${s.use}</td>
-                </tr>`).join('');
-            speedTableHtml = `
+                    <td>\${s.speed} km/h</td>
+                    <td>\${s.pace} min/km</td>
+                    <td>\${s.use}</td>
+                </tr>\`).join('');
+            speedTableHtml = \`
             <div class="card set-section">
                 <div class="set-section-title">
                     <span class="set-section-icon">⏱️</span>
                     Referencia velocidades cinta
                 </div>
-                <p class="text-xs text-muted" style="margin-bottom: 10px;">${this.state.speedReference.note || 'Todas las sesiones al 1% inclinación'}</p>
+                <p class="text-xs text-muted" style="margin-bottom: 10px;">\${this.state.speedReference.note || 'Todas las sesiones al 1% inclinación'}</p>
                 <div class="speed-table-wrapper">
                     <table class="speed-table">
                         <thead>
@@ -78,28 +80,28 @@ const SettingsView = {
                                 <th>Uso</th>
                             </tr>
                         </thead>
-                        <tbody>${rows}</tbody>
+                        <tbody>\${rows}</tbody>
                     </table>
                 </div>
-            </div>`;
+            </div>\`;
         }
 
         // Alert signals
         let alertsHtml = '';
         if (this.state.alertSignals && this.state.alertSignals.length > 0) {
-            const items = this.state.alertSignals.map(a => `<li>${a}</li>`).join('');
-            alertsHtml = `
+            const items = this.state.alertSignals.map(a => \`<li>\${a}</li>\`).join('');
+            alertsHtml = \`
             <div class="card set-section set-alerts">
                 <div class="set-section-title">
                     <span class="set-section-icon">⚠️</span>
                     Señales de alerta
                 </div>
                 <p class="text-xs text-muted" style="margin-bottom: 8px;">Frenar y reportar si aparece alguna:</p>
-                <ul class="alert-list">${items}</ul>
-            </div>`;
+                <ul class="alert-list">\${items}</ul>
+            </div>\`;
         }
 
-        return `
+        return \`
         <div class="set-header">
             <h1 class="section-title">Ajustes</h1>
         </div>
@@ -112,15 +114,15 @@ const SettingsView = {
             </div>
             <div class="form-group">
                 <label for="set-name">Nombre</label>
-                <input type="text" id="set-name" class="form-control" value="${p.name || ''}" placeholder="Tu nombre">
+                <input type="text" id="set-name" class="form-control" value="\${p.name || ''}" placeholder="Tu nombre">
             </div>
             <div class="form-group">
                 <label>Email</label>
-                <div class="set-readonly">${user.email || '—'}</div>
+                <div class="set-readonly">\${user.email || '—'}</div>
             </div>
             <div class="form-group">
                 <label>Rol</label>
-                <div><span class="badge ${roleBadge}">${roleLabel}</span></div>
+                <div><span class="badge \${roleBadge}">\${roleLabel}</span></div>
             </div>
             <button class="btn btn-primary btn-full" id="set-save-profile">Guardar perfil</button>
             <div class="set-save-ok" id="set-profile-ok" style="display:none;">✅ Perfil guardado</div>
@@ -134,7 +136,7 @@ const SettingsView = {
             </div>
             <div class="form-group">
                 <label for="set-race-date">Fecha de la carrera</label>
-                <input type="date" id="set-race-date" class="form-control" value="${raceDate}">
+                <input type="date" id="set-race-date" class="form-control" value="\${raceDate}">
             </div>
             <div class="form-group">
                 <label>Distancia</label>
@@ -144,31 +146,31 @@ const SettingsView = {
                 <label>Tiempo objetivo</label>
                 <div class="wl-duration-inputs">
                     <div class="wl-duration-field">
-                        <input type="number" id="set-goal-h" class="form-control" inputmode="numeric" min="0" max="9" placeholder="HH" value="${goalH}">
+                        <input type="number" id="set-goal-h" class="form-control" inputmode="numeric" min="0" max="9" placeholder="HH" value="\${goalH}">
                         <span class="wl-duration-label">h</span>
                     </div>
                     <span class="wl-duration-sep">:</span>
                     <div class="wl-duration-field">
-                        <input type="number" id="set-goal-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="${goalM}">
+                        <input type="number" id="set-goal-m" class="form-control" inputmode="numeric" min="0" max="59" placeholder="MM" value="\${goalM}">
                         <span class="wl-duration-label">min</span>
                     </div>
                     <span class="wl-duration-sep">:</span>
                     <div class="wl-duration-field">
-                        <input type="number" id="set-goal-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="${goalS}">
+                        <input type="number" id="set-goal-s" class="form-control" inputmode="numeric" min="0" max="59" placeholder="SS" value="\${goalS}">
                         <span class="wl-duration-label">seg</span>
                     </div>
                 </div>
             </div>
-            <div class="set-countdown" id="set-countdown">${daysLeftText}</div>
+            <div class="set-countdown" id="set-countdown">\${daysLeftText}</div>
             <button class="btn btn-primary btn-full" id="set-save-goal">Guardar objetivo</button>
             <div class="set-save-ok" id="set-goal-ok" style="display:none;">✅ Objetivo guardado</div>
         </div>
 
         <!-- Speed reference -->
-        ${speedTableHtml}
+        \${speedTableHtml}
 
         <!-- Alert signals -->
-        ${alertsHtml}
+        \${alertsHtml}
 
         <!-- Data export -->
         <div class="card set-section">
@@ -193,13 +195,13 @@ const SettingsView = {
             <div class="set-app-row">
                 <span class="text-sm">Estado de conexión</span>
                 <span class="set-status">
-                    <span class="set-status-dot ${statusDot}"></span>
-                    ${statusText}
+                    <span class="set-status-dot \${statusDot}"></span>
+                    \${statusText}
                 </span>
             </div>
             <div class="set-app-row">
                 <span class="text-sm">Sincronización</span>
-                <span class="text-sm text-muted" id="set-pending">${pendingText}</span>
+                <span class="text-sm text-muted" id="set-pending">\${pendingText}</span>
             </div>
             <button class="btn btn-secondary btn-full set-export-btn" id="set-sync">
                 🔄 Sincronizar datos
@@ -215,7 +217,7 @@ const SettingsView = {
         <!-- Logout -->
         <button class="btn btn-full set-logout-btn" id="set-logout">
             🚪 Cerrar sesión
-        </button>`;
+        </button>\`;
     },
 
     calcDaysLeft(dateStr) {
@@ -231,7 +233,7 @@ const SettingsView = {
         document.getElementById('set-save-profile')?.addEventListener('click', async () => {
             const name = document.getElementById('set-name').value.trim();
             const uid = window.currentUser.uid;
-            await db.ref(`users/${uid}/name`).set(name);
+            await db.ref(\`users/\${uid}/name\`).set(name);
             this.flashSaved('set-profile-ok');
         });
 
@@ -241,14 +243,14 @@ const SettingsView = {
             const h = document.getElementById('set-goal-h').value || '0';
             const m = document.getElementById('set-goal-m').value || '0';
             const s = document.getElementById('set-goal-s').value || '0';
-            const raceGoalTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            const raceGoalTime = \`\${String(h).padStart(2, '0')}:\${String(m).padStart(2, '0')}:\${String(s).padStart(2, '0')}\`;
 
             const uid = window.currentUser.uid;
-            await db.ref(`users/${uid}`).update({ raceDate, raceGoalTime });
+            await db.ref(\`users/\${uid}\`).update({ raceDate, raceGoalTime });
 
             // Update countdown
             const daysLeft = this.calcDaysLeft(raceDate);
-            const txt = daysLeft > 0 ? `Faltan <strong>${daysLeft} días</strong> para la carrera` : daysLeft === 0 ? '<strong>¡Hoy es el día!</strong>' : 'La carrera ya pasó';
+            const txt = daysLeft > 0 ? \`Faltan <strong>\${daysLeft} días</strong> para la carrera\` : daysLeft === 0 ? '<strong>¡Hoy es el día!</strong>' : 'La carrera ya pasó';
             document.getElementById('set-countdown').innerHTML = txt;
 
             this.flashSaved('set-goal-ok');
@@ -257,7 +259,7 @@ const SettingsView = {
         // Update countdown on date change
         document.getElementById('set-race-date')?.addEventListener('change', (e) => {
             const daysLeft = this.calcDaysLeft(e.target.value);
-            const txt = daysLeft > 0 ? `Faltan <strong>${daysLeft} días</strong> para la carrera` : daysLeft === 0 ? '<strong>¡Hoy es el día!</strong>' : 'La carrera ya pasó';
+            const txt = daysLeft > 0 ? \`Faltan <strong>\${daysLeft} días</strong> para la carrera\` : daysLeft === 0 ? '<strong>¡Hoy es el día!</strong>' : 'La carrera ya pasó';
             document.getElementById('set-countdown').innerHTML = txt;
         });
 
@@ -267,7 +269,7 @@ const SettingsView = {
             btn.disabled = true;
             btn.textContent = 'Exportando...';
             const logs = await DB.getWorkoutLogs(window.currentUser.uid);
-            this.downloadJSON(logs || {}, `runtracker_historial_${Utils.formatDate(new Date())}.json`);
+            this.downloadJSON(logs || {}, \`runtracker_historial_\${Utils.formatDate(new Date())}.json\`);
             btn.disabled = false;
             btn.textContent = '📥 Exportar historial (JSON)';
         });
@@ -278,7 +280,7 @@ const SettingsView = {
             btn.disabled = true;
             btn.textContent = 'Exportando...';
             const plan = await DB.getPlan();
-            this.downloadJSON(plan || {}, `runtracker_plan_${Utils.formatDate(new Date())}.json`);
+            this.downloadJSON(plan || {}, \`runtracker_plan_\${Utils.formatDate(new Date())}.json\`);
             btn.disabled = false;
             btn.textContent = '📥 Exportar plan (JSON)';
         });
@@ -290,7 +292,7 @@ const SettingsView = {
             btn.textContent = '🔄 Sincronizando...';
             await Offline.syncQueue();
             const pending = Offline.getQueue().length;
-            document.getElementById('set-pending').textContent = pending > 0 ? `${pending} pendientes` : 'Todo sincronizado';
+            document.getElementById('set-pending').textContent = pending > 0 ? \`\${pending} pendientes\` : 'Todo sincronizado';
             btn.disabled = false;
             btn.textContent = '🔄 Sincronizar datos';
         });
@@ -365,3 +367,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 // Register with router
 Router.registerView('settings', SettingsView);
+`;
+
+fs.writeFileSync('public/js/views/settings.js', content);
+console.log('settings.js actualizado');

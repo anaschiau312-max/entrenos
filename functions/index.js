@@ -80,13 +80,25 @@ exports.analyzeWatchScreenshot = onRequest(
     // Call Gemini API
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-    const prompt = "Analiza esta captura de pantalla de un reloj deportivo OnePlus Watch 2. " +
-      "Puede ser de running o ciclismo. " +
-      "Extrae TODOS los datos visibles y devuélvelos en JSON con estos campos: " +
+    const prompt = "Analiza esta captura de pantalla de un reloj deportivo (OnePlus Watch 2 o similar). " +
+      "Puede ser de running, ciclismo o entrenamiento de fuerza. " +
+      "Extrae TODOS los datos numéricos visibles y devuélvelos en JSON con estos campos: " +
       "{distance_km, duration, pace_avg, calories, cadence_avg, steps, stride_length_m, " +
       "heart_rate_avg, heart_rate_max, elevation_m, ground_contact_balance, ground_contact_time_ms, " +
-      "vertical_oscillation_cm, power_watts, speed_avg, speed_max}. " +
-      "Para ciclismo: extrae calories (calorías activas), heart_rate_avg (FC media), heart_rate_max (FC máxima/Mayor). " +
+      "vertical_oscillation_cm, power_watts, speed_avg, speed_max, zone_percentage, vo2_max}. " +
+      "IMPORTANTE para running: " +
+      "- pace_avg (Ritmo medio): puede aparecer como 7'25''/km o 7:25/km. Devuelve SIEMPRE en formato M:SS (ej: 7:25). " +
+      "  Si ves 7'25'' devuelve '7:25'. El primer número son minutos, el segundo segundos. " +
+      "- vo2_max: busca 'VO2 max estimado', 'VO2 Max', 'VO2max' o similar. Devuelve solo el número (ej: 45.5). " +
+      "IMPORTANTE para ciclismo y fuerza: " +
+      "- duration: tiempo total en formato HH:MM:SS o MM:SS " +
+      "- calories: calorías activas (número sin unidades) " +
+      "- heart_rate_avg: FC media o frecuencia cardíaca promedio (número en bpm) " +
+      "- heart_rate_max: FC máxima, FC mayor o frecuencia cardíaca máxima (número en bpm) " +
+      "- zone_percentage: porcentaje de zona de entrenamiento si aparece (número) " +
+      "- speed_avg: velocidad media en km/h " +
+      "- speed_max: velocidad máxima en km/h " +
+      "Busca etiquetas como 'Duración', 'Cal activas', 'FC media', 'FC mayor', 'Vel media', 'Ritmo medio', 'VO2 max estimado', etc. " +
       "Si un campo no es visible en la imagen, usa null. " +
       "Devuelve SOLO el JSON sin texto adicional ni markdown.";
 
